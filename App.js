@@ -1,43 +1,26 @@
-import { StatusBar } from 'expo-status-bar';
-import { useCallback } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
-import colors from './assets/colors/colors'
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Entrance from './components/Entrance'
+import Login from './components/Login'
+import DailyOverview from './components/DailyOverview'
+import Registration from './components/Registration'
+import PasswordRetrival from './components/PasswordRetrival'
 
-SplashScreen.preventAutoHideAsync();
+const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [fontsLoaded] = useFonts({
-    "PixeloidSan": require("./assets/fonts/PixeloidSans-mLxMm.ttf"),
-    "PixeloidsSanBold": require("./assets/fonts/PixeloidSansBold-PKnYd.ttf"),
-    "MinimalPixel": require("./assets/fonts/MinimalPixelFont.ttf")
-  });
-
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-
-  if (!fontsLoaded) {
-    return null;
-  }
-
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      <Text style = {{fontFamily: "PixeloidSan", fontSize: 18}}>NutriZen's Early Beginnings</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator >
+        <Stack.Screen options = {{headerShown: false}}name="Entrance" component={Entrance} />
+        <Stack.Screen options = {{headerShown: false}}name="Login" component={Login} />
+        <Stack.Screen options = {{headerShown: false}}name="Registration" component={Registration} />
+        <Stack.Screen options = {{headerShown: false}}name="DailyOverview" component={DailyOverview} />
+        <Stack.Screen options = {{headerShown: false}}name="PasswordRetrival" component={PasswordRetrival} />
+
+
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor:  colors.backgroundColor,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

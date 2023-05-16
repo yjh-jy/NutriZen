@@ -6,7 +6,7 @@ import colors from '../assets/colors/colors'
 
 SplashScreen.preventAutoHideAsync();
 
-export default Registration = ({navigation}) => {
+const PasswordRetrival = ({navigation}) => {
   const [fontsLoaded] = useFonts({
     "PixeloidSan": require("../assets/fonts/PixeloidSans-mLxMm.ttf"),
     "PixeloidsSanBold": require("/Users/wakaka/Desktop/orbital_2023/assets/fonts/PixeloidSansBold-PKnYd.ttf"),
@@ -33,39 +33,23 @@ export default Registration = ({navigation}) => {
               autoCorrect = {false}
               autoComplete='email'
               selectionColor = {colors.backgroundColor}
+              placeholder='Enter Email Address'
               enterKeyHint = "done"
               >
               </TextInput>
 
-              <Text style = {styles.subtitle}>Email</Text>
 
-              <TextInput
-              style={styles.input}
-              autoCapitalize='none'
-              autoCorrect = {false}
-              autoComplete='new-password'
-              selectionColor = {colors.backgroundColor}
-              enterKeyHint = "done"
-              secureTextEntry
-              >
-              </TextInput>
-
-              <Text style = {styles.subtitle}>Password</Text>
+            <Pressable onPress={()=>{navigation.goBack()}}>
+              <Text style = {styles.reset}>Reset</Text>
+                </Pressable>
               
-              <Pressable onPress={()=>{}}>
-                <Text style = {styles.register}>Register</Text>
-                </Pressable>
-
-              <Pressable onPress={()=>{navigation.goBack()}}>
-                <Text style = {styles.back} >Back</Text>
-                </Pressable>
-
             </View>
             </KeyboardAvoidingView>
     </View>
   )
 }
 
+export default PasswordRetrival
 
 const styles = StyleSheet.create({
   container: {
@@ -76,7 +60,7 @@ const styles = StyleSheet.create({
   itemsWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 270,
+    marginTop: 350,
 
   },
   input: {
@@ -85,23 +69,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.textFieldColor,
     fontSize: 20,
     fontFamily: "PixeloidSan",
-    padding:10
+    padding:10,
+    fontSize: 15
     
   },
-  subtitle: {
+  reset: {
     fontFamily: "PixeloidsSanBold",
     fontSize: 20,
-    padding:10
-  },
-  register: {
-    fontFamily: "PixeloidsSanBold",
-    fontSize: 20,
-    marginTop:40,
-  },
-  back: {
-    fontFamily: "PixeloidsSanBold",
-    fontSize: 20,
-    marginTop:20,
+    padding:30
   }
-
 })
