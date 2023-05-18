@@ -1,12 +1,26 @@
 import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput} from 'react-native'
-import {useCallback} from 'react'
+import {useCallback, useState} from 'react'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import colors from '../assets/colors/colors'
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import {auth} from '../firebase'
 
 SplashScreen.preventAutoHideAsync();
 
 export default Registration = ({navigation}) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSignUp = () => {
+    createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      console.log('Registered with', user.email);
+    })
+    .catch( error => alert(error.message))
+  }
+  
   const [fontsLoaded] = useFonts({
     "PixeloidSan": require("../assets/fonts/PixeloidSans-mLxMm.ttf"),
     "PixeloidsSanBold": require("/Users/wakaka/Desktop/orbital_2023/assets/fonts/PixeloidSansBold-PKnYd.ttf"),
@@ -34,6 +48,8 @@ export default Registration = ({navigation}) => {
               autoComplete='email'
               selectionColor = {colors.backgroundColor}
               enterKeyHint = "done"
+              value= {email}
+              onChangeText={text => setEmail(text)}
               >
               </TextInput>
 
@@ -46,13 +62,15 @@ export default Registration = ({navigation}) => {
               autoComplete='new-password'
               selectionColor = {colors.backgroundColor}
               enterKeyHint = "done"
+              value= {password}
+              onChangeText={text => setPassword(text)}
               secureTextEntry
               >
               </TextInput>
 
               <Text style = {styles.subtitle}>Password</Text>
               
-              <Pressable onPress={()=>{}}>
+              <Pressable onPress={handleSignUp}>
                 <Text style = {styles.register}>Register</Text>
                 </Pressable>
 

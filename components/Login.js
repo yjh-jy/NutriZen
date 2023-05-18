@@ -1,12 +1,34 @@
-import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput} from 'react-native'
-import {useCallback} from 'react'
+import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput, } from 'react-native';
+import {useCallback, useEffect, useState} from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import colors from '../assets/colors/colors'
+import colors from '../assets/colors/colors';
+import { signInWithEmailAndPassword, onAuthStateChanged} from 'firebase/auth';
+import {auth} from '../firebase'
 
 SplashScreen.preventAutoHideAsync();
 
 export default Login = ({navigation}) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigation.push("DailyOverview")
+      }
+    });
+  }, [])
+
+  const handleLogin = () => {
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      console.log('Logged in with ', user.email);
+    })
+    .catch( error => alert(error.message))
+  }
+
   const [fontsLoaded] = useFonts({
     "PixeloidSan": require("../assets/fonts/PixeloidSans-mLxMm.ttf"),
     "PixeloidsSanBold": require("/Users/wakaka/Desktop/orbital_2023/assets/fonts/PixeloidSansBold-PKnYd.ttf"),
@@ -34,7 +56,8 @@ export default Login = ({navigation}) => {
               autoComplete='email'
               selectionColor = {colors.backgroundColor}
               enterKeyHint = "done"
-
+              value = {email}
+              onChangeText={text => setEmail(text)}
               >
               </TextInput>
 
@@ -47,18 +70,21 @@ export default Login = ({navigation}) => {
               autoComplete='current-password'
               selectionColor = {colors.backgroundColor}
               enterKeyHint = "done"
+              value = {password}
+              onChangeText={text => setPassword(text)}
               secureTextEntry
               >
               </TextInput>
               
               <Text style = {styles.subtitle}>Password</Text>
+              
               <Pressable onPress={()=>{navigation.push('PasswordRetrival')}}>
                 <Text style = {styles.passwordRetrival} >Forget Password?</Text>
                 </Pressable> 
-              <Pressable onPress={()=>{navigation.push("DailyOverview")}}>
+
+              <Pressable onPress={handleLogin}>
                 <Text style = {styles.login}>Login</Text>
                 </Pressable>
-              
 
               <Pressable onPress={()=>{navigation.goBack()}}>
                 <Text style = {styles.back} >Back</Text>

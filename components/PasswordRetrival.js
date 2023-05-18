@@ -1,12 +1,25 @@
-import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput} from 'react-native'
-import {useCallback} from 'react'
+import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput} from 'react-native';
+import {useCallback, useState} from 'react'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import colors from '../assets/colors/colors'
+import colors from '../assets/colors/colors';
+import {auth} from '../firebase';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 SplashScreen.preventAutoHideAsync();
 
 const PasswordRetrival = ({navigation}) => {
+  const [email, enterEmail] = useState('')
+
+  const resetPassword = () => {
+    sendPasswordResetEmail(auth, email)
+    .then(() => {
+      alert("Password Reset Email Sent!");
+      navigation.navigate("Entrance")
+  })
+  .catch((error) => alert(error.message));
+  }
+
   const [fontsLoaded] = useFonts({
     "PixeloidSan": require("../assets/fonts/PixeloidSans-mLxMm.ttf"),
     "PixeloidsSanBold": require("/Users/wakaka/Desktop/orbital_2023/assets/fonts/PixeloidSansBold-PKnYd.ttf"),
@@ -35,11 +48,13 @@ const PasswordRetrival = ({navigation}) => {
               selectionColor = {colors.backgroundColor}
               placeholder='Enter Email Address'
               enterKeyHint = "done"
+              value = {email}
+              onChangeText={text => enterEmail(text)}
               >
               </TextInput>
 
 
-            <Pressable onPress={()=>{navigation.goBack()}}>
+            <Pressable onPress={resetPassword}>
               <Text style = {styles.reset}>Reset</Text>
                 </Pressable>
               
