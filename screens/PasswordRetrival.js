@@ -8,7 +8,7 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 
 SplashScreen.preventAutoHideAsync();
 
-const PasswordRetrival = ({navigation}) => {
+export default PasswordRetrival = ({navigation}) => {
   const [email, enterEmail] = useState('')
 
   const resetPassword = () => {
@@ -64,7 +64,6 @@ const PasswordRetrival = ({navigation}) => {
   )
 }
 
-export default PasswordRetrival
 
 const styles = StyleSheet.create({
   container: {
