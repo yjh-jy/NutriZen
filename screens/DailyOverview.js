@@ -6,7 +6,6 @@ import colors from '../assets/colors/colors'
 import { auth } from '../firebase';
 import { signOut } from 'firebase/auth';
 
-
 SplashScreen.preventAutoHideAsync();
 
 export default DailyOverview = ({navigation}) => {
@@ -19,8 +18,8 @@ export default DailyOverview = ({navigation}) => {
   };
   const [fontsLoaded] = useFonts({
     "PixeloidSan": require("../assets/fonts/PixeloidSans-mLxMm.ttf"),
-    "PixeloidsSanBold": require("/Users/wakaka/Desktop/orbital_2023/assets/fonts/PixeloidSansBold-PKnYd.ttf"),
-    "MinimalPixel": require("/Users/wakaka/Desktop/orbital_2023/assets/fonts/MinimalPixelFont.ttf")
+    "PixeloidsSanBold": require("../assets/fonts/PixeloidSansBold-PKnYd.ttf"),
+    "MinimalPixel": require("../assets/fonts/MinimalPixelFont.ttf")
     });
 
     const onLayoutRootView = useCallback(async () => {
@@ -34,7 +33,7 @@ export default DailyOverview = ({navigation}) => {
     }
 
   return (
-    
+    <SafeAreaProvider>
     <View style= {styles.container}onLayout={onLayoutRootView}>
       <SafeAreaView>
       <Text>DailyOverview</Text>
@@ -45,6 +44,7 @@ export default DailyOverview = ({navigation}) => {
         </SafeAreaView>
 
     </View>
+    </SafeAreaProvider>
   )
 }
 
@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
     fontFamily: "PixeloidsSanBold",
     fontSize: 13,
     alignSelf: 'center',
+    marginTop: 30
     
   }
 })

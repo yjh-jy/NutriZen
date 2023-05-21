@@ -22,8 +22,8 @@ export default Login = ({navigation}) => {
 
   const [fontsLoaded] = useFonts({
     "PixeloidSan": require("../assets/fonts/PixeloidSans-mLxMm.ttf"),
-    "PixeloidsSanBold": require("/Users/wakaka/Desktop/orbital_2023/assets/fonts/PixeloidSansBold-PKnYd.ttf"),
-    "MinimalPixel": require("/Users/wakaka/Desktop/orbital_2023/assets/fonts/MinimalPixelFont.ttf")
+    "PixeloidsSanBold": require("../assets/fonts/PixeloidSansBold-PKnYd.ttf"),
+    "MinimalPixel": require("../assets/fonts/MinimalPixelFont.ttf")
     });
 
     const onLayoutRootView = useCallback(async () => {
