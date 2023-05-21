@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   itemsWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 350,
+    marginTop: '90%',
 
   },
   input: {

@@ -33,7 +33,6 @@ export default DailyOverview = ({navigation}) => {
     }
 
   return (
-    <SafeAreaProvider>
     <View style= {styles.container}onLayout={onLayoutRootView}>
       <SafeAreaView>
       <Text>DailyOverview</Text>
@@ -44,7 +43,6 @@ export default DailyOverview = ({navigation}) => {
         </SafeAreaView>
 
     </View>
-    </SafeAreaProvider>
   )
 }
 

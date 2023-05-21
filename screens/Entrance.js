@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.backgroundColor,
     },
     itemsWrapper: {
-        marginTop: 270,
+        marginTop: '60%',
         alignItems: 'center',
         justifyContent: 'center'
 
