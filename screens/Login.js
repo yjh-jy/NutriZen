@@ -3,7 +3,7 @@ import {useCallback, useEffect, useState} from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import colors from '../assets/colors/colors';
-import { signInWithEmailAndPassword, onAuthStateChanged} from 'firebase/auth';
+import { signInWithEmailAndPassword} from 'firebase/auth';
 import {auth} from '../firebase'
 
 SplashScreen.preventAutoHideAsync();
@@ -12,19 +12,10 @@ export default Login = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        navigation.push("DailyOverview")
-      }
-    });
-  }, [])
-
   const handleLogin = () => {
     signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       const user = userCredential.user;
-      console.log('Logged in with ', user.email);
     })
     .catch( error => alert(error.message))
   }

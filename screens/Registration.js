@@ -3,7 +3,7 @@ import {useCallback, useState} from 'react'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import colors from '../assets/colors/colors'
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import {auth} from '../firebase'
 
 SplashScreen.preventAutoHideAsync();
@@ -16,9 +16,13 @@ export default Registration = ({navigation}) => {
     createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       const user = userCredential.user;
-      console.log('Registered with', user.email);
+      sendEmailVerification(auth.currentUser)
+      .then(() => {
+        alert('Email Verification Sent!')
+      });
     })
     .catch( error => alert(error.message))
+    
   }
   
   const [fontsLoaded] = useFonts({
