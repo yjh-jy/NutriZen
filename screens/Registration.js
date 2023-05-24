@@ -1,48 +1,35 @@
 import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput} from 'react-native'
-import {useCallback, useState} from 'react'
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
+import {useState} from 'react'
 import colors from '../assets/colors/colors'
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import {auth} from '../firebase'
+import LoadingAnimation from './LoadingAnimation';
 
-SplashScreen.preventAutoHideAsync();
 
 export default Registration = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setisLoading] = useState(false)
 
-  const handleSignUp = () => {
-    createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      const user = userCredential.user;
+  async function handleSignUp() {
+    setisLoading(true);
+    await createUserWithEmailAndPassword(auth, email, password)
+    .then(() => {
       sendEmailVerification(auth.currentUser)
       .then(() => {
         alert('Email Verification Sent!')
       });
     })
-    .catch( error => alert(error.message))
-    
+    .catch( error => alert(error.code));
+    setisLoading(false);
   }
   
-  const [fontsLoaded] = useFonts({
-    "PixeloidSan": require("../assets/fonts/PixeloidSans-mLxMm.ttf"),
-    "PixeloidsSanBold": require("../assets/fonts/PixeloidSansBold-PKnYd.ttf"),
-    "MinimalPixel": require("../assets/fonts/MinimalPixelFont.ttf")
-    });
-
-    const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-        await SplashScreen.hideAsync();
-    }
-    }, [fontsLoaded]);
-
-    if (!fontsLoaded) {
-    return null;
-    }
+  if (isLoading) {
+    return <LoadingAnimation/>
+  }
 
   return (
-    <View style={styles.container} onLayout={onLayoutRootView} >
+    <View style={styles.container} >
         <KeyboardAvoidingView>
             <View style = {styles.itemsWrapper}>
               <TextInput

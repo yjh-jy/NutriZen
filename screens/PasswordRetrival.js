@@ -1,43 +1,31 @@
 import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput} from 'react-native';
-import {useCallback, useState} from 'react'
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
+import {useState} from 'react'
 import colors from '../assets/colors/colors';
 import {auth} from '../firebase';
 import { sendPasswordResetEmail } from 'firebase/auth';
+import LoadingAnimation from './LoadingAnimation';
 
-SplashScreen.preventAutoHideAsync();
 
 export default PasswordRetrival = ({navigation}) => {
-  const [email, enterEmail] = useState('')
+  const [email, enterEmail] = useState('');
+  const [isLoading, setisLoading] = useState(false);
 
-  const resetPassword = () => {
-    sendPasswordResetEmail(auth, email)
+  async function resetPassword() {
+    setisLoading(true);
+    await sendPasswordResetEmail(auth, email)
     .then(() => {
       alert("Password Reset Email Sent!");
       navigation.navigate("Entrance")
   })
-  .catch((error) => alert(error.message));
+  .catch((error) => alert(error.code));
+  setisLoading(false);
+  }
+  if (isLoading) {
+    return <LoadingAnimation/>
   }
 
-  const [fontsLoaded] = useFonts({
-    "PixeloidSan": require("../assets/fonts/PixeloidSans-mLxMm.ttf"),
-    "PixeloidsSanBold": require("../assets/fonts/PixeloidSansBold-PKnYd.ttf"),
-    "MinimalPixel": require("../assets/fonts/MinimalPixelFont.ttf")
-    });
-
-    const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-        await SplashScreen.hideAsync();
-    }
-    }, [fontsLoaded]);
-
-    if (!fontsLoaded) {
-    return null;
-    }
-
   return (
-    <View style={styles.container} onLayout={onLayoutRootView} >
+    <View style={styles.container} >
         <KeyboardAvoidingView>
             <View style = {styles.itemsWrapper}>
               <TextInput

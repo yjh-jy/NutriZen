@@ -1,43 +1,30 @@
-import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput, } from 'react-native';
-import {useCallback, useEffect, useState} from 'react';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
+import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput } from 'react-native';
+import {useState} from 'react';
 import colors from '../assets/colors/colors';
 import { signInWithEmailAndPassword} from 'firebase/auth';
 import {auth} from '../firebase'
-
-SplashScreen.preventAutoHideAsync();
+import LoadingAnimation from './LoadingAnimation';
 
 export default Login = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setisLoading] = useState(false)
 
-  const handleLogin = () => {
-    signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      const user = userCredential.user;
-    })
-    .catch( error => alert(error.message))
+  async function handleLogin() {
+  setisLoading(true);
+  await signInWithEmailAndPassword(auth, email, password)
+  .catch( error => {
+    alert(error.code)
+  });
+  setisLoading(false);
+}
+
+  if (isLoading) {
+    return <LoadingAnimation/>
   }
 
-  const [fontsLoaded] = useFonts({
-    "PixeloidSan": require("../assets/fonts/PixeloidSans-mLxMm.ttf"),
-    "PixeloidsSanBold": require("../assets/fonts/PixeloidSansBold-PKnYd.ttf"),
-    "MinimalPixel": require("../assets/fonts/MinimalPixelFont.ttf")
-    });
-
-    const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-        await SplashScreen.hideAsync();
-    }
-    }, [fontsLoaded]);
-
-    if (!fontsLoaded) {
-    return null;
-    }
-
   return (
-    <View style={styles.container} onLayout={onLayoutRootView} >
+    <View style={styles.container} >
         <KeyboardAvoidingView>
             <View style = {styles.itemsWrapper}>
               <TextInput
@@ -81,14 +68,11 @@ export default Login = ({navigation}) => {
                 <Text style = {styles.back} >Back</Text>
                 </Pressable>
               
-              
-
             </View>
             </KeyboardAvoidingView>
     </View>
   )
 }
-
 
 const styles = StyleSheet.create({
   container: {
