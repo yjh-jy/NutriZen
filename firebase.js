@@ -8,7 +8,8 @@ import {API_KEY_FIREBASE,
   PROJECT_ID, 
   STORAGE_BUCKET,
   MESSAGING_SENDER_ID, 
-  APP_ID} from '@env'
+  APP_ID} from '@env';
+import { getFirestore } from "firebase/firestore";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -28,4 +29,5 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase Authentication and get a reference to the service
+export const db = getFirestore(app);
 export const auth = initializeAuth(app, { persistence: getReactNativePersistence(AsyncStorage) });

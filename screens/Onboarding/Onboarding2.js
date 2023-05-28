@@ -2,7 +2,8 @@ import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput, } f
 import {useState} from 'react';
 import colors from '../../assets/colors/colors';
 
-export default Onboarding2 = ({navigation}) => {
+
+export default Onboarding2 = ({route, navigation}) => {
   const [age, setAge] = useState('');
 
   return (
@@ -26,7 +27,7 @@ export default Onboarding2 = ({navigation}) => {
               <Text style = {styles.subtitle}>Age</Text>
               
 
-              <Pressable onPress={()=>{navigation.navigate('Onboarding3')}}>
+              <Pressable onPress={()=>{navigation.navigate('Onboarding3', {ageParam: age, nameParam: route.params.nameParam})}}>
                 <Text style = {styles.proceed}>Proceed</Text>
                 </Pressable>
 

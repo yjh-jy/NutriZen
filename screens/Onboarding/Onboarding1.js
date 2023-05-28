@@ -1,9 +1,10 @@
 import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput, } from 'react-native';
-import {useState} from 'react';
+import {useState, useCallback} from 'react';
 import { useFonts } from 'expo-font';
 import colors from '../../assets/colors/colors';
-import LoadingAnimation from '../LoadingAnimation';
+import * as SplashScreen from 'expo-splash-screen';
 
+SplashScreen.preventAutoHideAsync();
 
 export default Onboarding1 = ({navigation}) => {
   const [name, setName] = useState('');
@@ -14,12 +15,18 @@ export default Onboarding1 = ({navigation}) => {
     "MinimalPixel": require("../../assets/fonts/MinimalPixelFont.ttf")
     });
 
-  if (!fontsLoaded) {
-    return <LoadingAnimation/>
-  }
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+        await SplashScreen.hideAsync();
+    }
+    }, [fontsLoaded]);
+
+    if (!fontsLoaded) {
+    return null;
+    }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onLayout={onLayoutRootView}>
         <KeyboardAvoidingView>
             <View style = {styles.itemsWrapper}>
               <TextInput
@@ -36,7 +43,7 @@ export default Onboarding1 = ({navigation}) => {
 
               <Text style = {styles.subtitle}>Enter your name</Text>              
 
-              <Pressable onPress={() => {navigation.navigate('Onboarding2')}}>
+              <Pressable onPress={() => {navigation.navigate('Onboarding2', {nameParam: name})}}>
                 <Text style = {styles.proceed}>Proceed</Text>
                 </Pressable>
               
