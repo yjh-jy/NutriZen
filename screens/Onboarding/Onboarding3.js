@@ -3,7 +3,7 @@ import {useState} from 'react';
 import colors from '../../assets/colors/colors';
 
 
-export default Onboarding3 = ({navigation}) => {
+export default Onboarding3 = ({navigation, route}) => {
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
 
@@ -45,7 +45,13 @@ export default Onboarding3 = ({navigation}) => {
               <Text style = {styles.subtitle}>Weight in KG</Text>
               
 
-              <Pressable onPress={() => {navigation.navigate('Onboarding4')}}>
+              <Pressable onPress={() => {
+                navigation.navigate('Onboarding4', {
+                  heightParam: height, 
+                  weightParam: weight, 
+                  ageParam: route.params.ageParam, 
+                  nameParam: route.params.nameParam
+                  })}}>
                 <Text style = {styles.proceed}>Proceed</Text>
                 </Pressable>
 

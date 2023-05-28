@@ -2,15 +2,40 @@ import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput, } f
 import {useState} from 'react';
 import colors from '../../assets/colors/colors';
 import LoadingAnimation from '../LoadingAnimation';
+import { collection, doc, setDoc} from "firebase/firestore"; 
+import { db } from '../../firebase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { auth } from '../../firebase';
 
 
-export default Onboarding4 = ({navigation}) => {
+export default Onboarding4 = ({navigation, route}) => {
+  const [isloading, setIsloading] = useState(false);
   const [goal, setGoal] = useState('');
+  const name = route.params.nameParam;
+  const age = route.params.ageParam;
+  const height = route.params.heightParam;
+  const weight = route.params.weightParam;
 
-  const handleSubmit = () => {
-    alert('End of the Line :( Construction Ahead')
+  async function handleSubmit() {
+    setIsloading(true);
+    const userRef = doc(collection(db, "users"));
+    await setDoc(userRef, {
+      name: name,
+      age: age,
+      height: height,
+      weight: weight,
+      goal: goal
+    })
+  user = auth.currentUser;
+  await AsyncStorage.setItem(user.uid, userRef.id);
+  console.log(user.uid, userRef.id);
+  setIsloading(false);
   }
-  
+
+
+  if (isloading) {
+    return <LoadingAnimation/>
+  }
   
   return (
     <View style={styles.container}>
