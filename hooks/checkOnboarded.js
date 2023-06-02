@@ -17,6 +17,6 @@ export function checkOnboarded() {
     return (() => {unsub()});
   }, [auth.currentUser]);
 
-  return {onboarded};
+  return onboarded;
   
 }

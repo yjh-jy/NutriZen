@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function RootNavigation() {
   const {user} = useAuthentication();
   // AsyncStorage.clear();
-  const {onboarded} = checkOnboarded();
+  const onboarded = checkOnboarded();
   return user ? (onboarded ? <UserTab /> : <OnboardingStack/> ) : <AuthStack />;
 
 }
