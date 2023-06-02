@@ -8,7 +8,7 @@ import { signOut } from 'firebase/auth';
 
 SplashScreen.preventAutoHideAsync();
 
-export default DailyOverview = ({navigation}) => {
+export default Profile = ({navigation}) => {
   const handleSignOut = () => {
     signOut(auth)
     .catch((error) => {
