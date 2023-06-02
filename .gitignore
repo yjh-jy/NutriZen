@@ -11,6 +11,7 @@ npm-debug.*
 web-build/
 metro.config.js
 .env
+eas.json
 # macOS
 .DS_Store
 
