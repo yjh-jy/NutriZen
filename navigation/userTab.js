@@ -3,11 +3,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import colors from '../assets/colors/colors';
 
 import DailyOverview from '../screens/DailyOverview';
 import AddMeal from '../screens/AddMeal';
 import Profile from '../screens/Profile';
+import Calendar from '../screens/Calendar';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -38,14 +38,14 @@ function MainTabs() {
             tabBarInactiveTintColor: 'gray',
             tabBarShowLabel: false,
           })}>
-          <Tab.Screen options = {{headerShown: false}}name="DailyOverview" component={DailyOverview} />
-          <Tab.Screen options = {{headerShown: false}}name="AddMealContainer" component={EmptyScreen} 
-                    listeners={({navigation})=> ({
-                      tabPress : e => {
-                        e.preventDefault();
-                        navigation.navigate('AddMeal')
-                      }
-                    })}/>
+          <Tab.Screen name="DailyOverview" component={DailyOverview} options = {{headerShown: false}} />
+          <Tab.Screen name="AddMealContainer" component={EmptyScreen} options = {{headerShown: false}}
+            listeners={({navigation})=> ({
+              tabPress : e => {
+                e.preventDefault();
+                navigation.navigate('AddMeal')
+              }
+              })}/>
           <Tab.Screen options = {{headerShown: false}}name="Profile" component={Profile} />
   </Tab.Navigator>
   )
@@ -55,8 +55,9 @@ export default function UserTab() {
     return (
         <NavigationContainer>
           <Stack.Navigator>
-            <Stack.Screen options = {{headerShown: false}}name="MainTabs" component={MainTabs} />
-            <Stack.Screen options = {{headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS, gestureEnabled:false}}name="AddMeal" component={AddMeal} />
+            <Stack.Screen name="MainTabs" component={MainTabs}  options = {{headerShown: false}}/>
+            <Stack.Screen name="AddMeal" component={AddMeal} options = {{headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS, gestureEnabled:false}} />
+            <Stack.Screen name="Calendar" component={Calendar} options = {{headerShown: false}} />
           </Stack.Navigator>
         </NavigationContainer>
     );
