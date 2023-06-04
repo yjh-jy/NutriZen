@@ -30,9 +30,9 @@ export default DailyOverview = ({navigation}) => {
 
   return (
     <View style= {styles.container}onLayout={onLayoutRootView}>
-      <SafeAreaView>
 
-        <View name = "Top Icon">
+
+        <View name = "Top Icon" style = {styles.top}>
           <View name= "Date Bar" >
             <Image style = {styles.dateBar} 
             source = {require("../assets/images/date_bg.png")}>
@@ -46,41 +46,68 @@ export default DailyOverview = ({navigation}) => {
         </TouchableHighlight>
         </View> 
 
-      <View name = "Middle Icon">
+      <View name = "Middle Icon" style = {styles.middle}>
         <View name = "Scroll" style = {styles.scroll}>
-          <Image source = {require("../assets/images/daily_overview_bg.png")}></Image>
+          <Image source = {require("../assets/images/dailyoverviewbg.png")}></Image>
           <Text style = {styles.dailyOverviewText}>Daily Overview</Text>
+          <View name= "Nutrient Bars" style={styles.nutrient}>
 
-          <View name = "Left Side Nutrients">
-          <Image style = {styles.gif} source = {require("../assets/gifs/excessive/excessive1.gif")}></Image>
+            <View name = "Left Side Nutrients">
+            <Image style = {styles.gifLeft1} source = {require("../assets/gifs/excessive/excessive1.gif")}></Image>
+            <Text style = {styles.nutrientNamesLeft1}>Calories</Text>
+            <Image style = {styles.gifLeft2} source = {require("../assets/gifs/excessive/excessive1.gif")}></Image>
+            <Text style = {styles.nutrientNamesLeft2}>Protein</Text>
+            <Image style = {styles.gifLeft3} source = {require("../assets/gifs/excessive/excessive1.gif")}></Image>
+            <Text style = {styles.nutrientNamesLeft3}>Fat</Text>
+            <Image style = {styles.gifLeft4} source = {require("../assets/gifs/excessive/excessive12.gif")}></Image>
+            <Text style = {styles.nutrientNamesLeft4}>Sugar</Text>
+            </View>
 
-
-
+            <View name = "Right Side Nutrients">
+            <Image style = {styles.gifRight1} source = {require("../assets/gifs/excessive/excessive1.gif")}></Image>
+            <Text style = {styles.nutrientNamesRight1}>Sodium</Text>
+            <Image style = {styles.gifRight2} source = {require("../assets/gifs/excessive/excessive1.gif")}></Image>
+            <Text style = {styles.nutrientNamesRight2}>Fibre</Text>
+            <Image style = {styles.gifRight3} source = {require("../assets/gifs/excessive/excessive1.gif")}></Image>
+            <Text style = {styles.nutrientNamesRight3}>Carbohydrates</Text>
+            <Image style = {styles.gifRight4} source = {require("../assets/gifs/excessive/excessive12.gif")}></Image>
+            <Text style = {styles.nutrientNamesRight4}>Cholestrol</Text>
           </View>
-
-          <View name = "Right Side Nutrients">
 
           </View>
         </View>
       </View>
 
 
-      <View name = "Bottom Icon">
+      <View name = "Bottom Icon" style ={styles.bottom}>
         <View name = "Recommendation" style = {styles.recommendation}>
           <Image source = {require("../assets/images/creature.png")}></Image>
           <Image style = {styles.textbox} source = {require("../assets/images/advice_box_bg.png")}></Image>
         </View>
       </View>
-      </SafeAreaView>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  top:{
+    marginTop:0,
+    marginLeft:-12.5,
+  },
+
+  middle:{
+    marginTop:-20,
+  },
+
+  bottom:{
+    marginTop:70,
+  },
+
   container: {
     flex: 1,
     flexDirection:'column',
     backgroundColor: colors.backgroundColor,
+    justifyContent:'space-evenly',
   },
   signOut:{
     fontFamily: "PixeloidsSanBold",
@@ -105,15 +132,16 @@ const styles = StyleSheet.create({
   },
 
   scroll: {
-    marginTop: -325,
+    marginTop: -250,
     alignItems: 'center',
     justifyContent: 'center',
+
 
   },
 
   dailyOverviewText: {
     fontFamily: 'PixeloidsSanBold',
-    marginTop: -515
+    marginTop: -550,
   },
 
   recommendation: {
@@ -126,12 +154,132 @@ const styles = StyleSheet.create({
     marginTop: -15,
   },
 
-  gif: {
-    height:100,
-    width: 120,
+  gifLeft1: {
+    height:70,
+    width: 130,
     marginTop: 30,
-    marginRight: 125
-  }
+    marginLeft:-130,
+    position: 'absolute',
+  },
+  gifLeft2: {
+    height:70,
+    width: 130,
+    marginTop: 110,
+    marginLeft: -130,
+    position: 'absolute',
+  },
+  gifLeft3: {
+    height:70,
+    width: 130,
+    marginTop: 190,
+    marginLeft: -130,
+    position: 'absolute',
+  },
+  gifLeft4: {
+    height:70,
+    width: 130,
+    marginTop: 270,
+    marginLeft: -130,
+    position: 'absolute',
+  },
 
+  nutrientNamesLeft1: {
+    marginLeft: -95,
+    alignItems: 'center',
+    marginTop:75,
+    position: 'absolute',
+    fontFamily: 'PixeloidSan',
+  },
+
+  nutrientNamesLeft2: {
+    marginLeft: -95,
+    alignItems: 'center',
+    marginTop:155,
+    position: 'absolute',
+    fontFamily: 'PixeloidSan',
+  },
+
+  nutrientNamesLeft3: {
+    marginLeft: -95,
+    alignItems: 'center',
+    marginTop:235,
+    position: 'absolute',
+    fontFamily: 'PixeloidSan',
+  },
+
+  nutrientNamesLeft4: {
+    marginLeft: -95,
+    alignItems: 'center',
+    marginTop:315,
+    position: 'absolute',
+    fontFamily: 'PixeloidSan',
+  },
+
+  gifRight1:{
+    height:70,
+    width: 130,
+    marginTop: 30,
+    marginLeft:0,
+    position: 'absolute',
+  },
+
+  gifRight2:{
+    height:70,
+    width: 130,
+    marginTop: 110,
+    marginLeft:0,
+    position: 'absolute',
+  },
+
+  gifRight3:{
+    height:70,
+    width: 130,
+    marginTop: 190,
+    marginLeft:0,
+    position: 'absolute',
+  },
+
+  gifRight4:{
+    height:70,
+    width: 130,
+    marginTop: 270,
+    marginLeft:0,
+    position: 'absolute',
+  },
+
+
+
+  nutrientNamesRight1: {
+    marginLeft: 50,
+    alignItems: 'center',
+    marginTop:75,
+    position: 'absolute',
+    fontFamily: 'PixeloidSan',
+  },
+
+  nutrientNamesRight2: {
+    marginLeft: 50,
+    alignItems: 'center',
+    marginTop:155,
+    position: 'absolute',
+    fontFamily: 'PixeloidSan',
+  },
+
+  nutrientNamesRight3: {
+    marginLeft: 15,
+    alignItems: 'center',
+    marginTop:235,
+    position: 'absolute',
+    fontFamily: 'PixeloidSan',
+    fontSize: 12
+  },
+
+  nutrientNamesRight4: {
+    marginLeft: 50,
+    alignItems: 'center',
+    marginTop:315,
+    position: 'absolute',
+    fontFamily: 'PixeloidSan',
+  },
 
 })

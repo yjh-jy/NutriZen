@@ -7,6 +7,7 @@ import colors from '../assets/colors/colors';
 import DailyOverview from '../screens/DailyOverview';
 import AddMeal from '../screens/AddMeal';
 import Profile from '../screens/Profile';
+import Calendar from '../screens/Calendar'
 
 
 const Tab = createBottomTabNavigator();

@@ -9,13 +9,7 @@ import { signOut } from 'firebase/auth';
 SplashScreen.preventAutoHideAsync();
 
 export default DailyOverview = ({navigation}) => {
-  const handleSignOut = () => {
-    signOut(auth)
-    .catch((error) => {
-      alert(error.message)
-    });
 
-  };
   const [fontsLoaded] = useFonts({
     "PixeloidSan": require("../assets/fonts/PixeloidSans-mLxMm.ttf"),
     "PixeloidsSanBold": require("../assets/fonts/PixeloidSansBold-PKnYd.ttf"),
@@ -37,9 +31,7 @@ export default DailyOverview = ({navigation}) => {
       <SafeAreaView>
       <Text>AddPicture</Text>
 
-      <Pressable onPress={handleSignOut}>
-        <Text style = {styles.signOut} >Sign Out</Text>
-        </Pressable> 
+
         </SafeAreaView>
 
     </View>
