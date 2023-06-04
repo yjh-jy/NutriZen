@@ -1,77 +1,78 @@
-import { StyleSheet, Text, View, SafeAreaView, Pressable, Image, TouchableHighlight } from 'react-native'
-import {useCallback} from 'react'
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
+import { StyleSheet, Text, View, Pressable, Image, ImageBackground } from 'react-native'
+import {useState} from 'react'
 import colors from '../assets/colors/colors'
-
-
-SplashScreen.preventAutoHideAsync();
+import LoadingAnimation from './LoadingAnimation';
+import NutrientBar from './components/NutrientBar';
 
 export default DailyOverview = ({navigation}) => {
 
-  const [fontsLoaded] = useFonts({
-    "PixeloidSan": require("../assets/fonts/PixeloidSans-mLxMm.ttf"),
-    "PixeloidsSanBold": require("../assets/fonts/PixeloidSansBold-PKnYd.ttf"),
-    "MinimalPixel": require("../assets/fonts/MinimalPixelFont.ttf")
-    });
+  const [calorie, setCalorie] = useState('lacking4');
+  const [sodium, setSodium] = useState('excessive6');
+  const [protein, setProtein] = useState('sufficient4');
+  const [fibre, setFibre] = useState('excessive12');
+  const [fat, setFat] = useState('lacking4');
+  const [carbohydrate, setCarbohydrate] = useState('sufficient5');
+  const [sugar, setSugar] = useState('lacking5');
+  const [cholesterol, setCholesterol] = useState('excessive5');
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-        await SplashScreen.hideAsync();
-    }
-    }, [fontsLoaded]);
-
-    if (!fontsLoaded) {
-    return null;
-    }
+  const [loading, setLoading] = useState(false);
 
   const testing = new Date();
   const dateTextWord = `${testing.getDate()}/${testing.getMonth()+1}/${testing.getFullYear()}`; 
 
-  return (
-    <View style= {styles.container}onLayout={onLayoutRootView}>
-      <SafeAreaView>
+  if (loading) {
+    return <LoadingAnimation/>
+  }
 
-        <View name = "Top Icon">
-          <View name= "Date Bar" >
-            <Image style = {styles.dateBar} 
-            source = {require("../assets/images/date_bg.png")}>
-            </Image>  
-            <Text className="datetext" style = {styles.dateText}>{dateTextWord}</Text>     
-          </View>
-        <TouchableHighlight onPress = {() => navigation.navigate('Calendar')}>
-          <View name = "Calendar" style = {styles.calendar}>
-            <Image source = {require("../assets/images/calendar.png")}></Image>
-          </View>
-        </TouchableHighlight>
+  return (
+    <View style= {styles.container}>
+
+        <View name = "Top Icon" style = {styles.top}>
+        <ImageBackground
+        source = {require("../assets/images/datebg.png")} style = {styles.dateBar}>
+          <Text className="datetext" style = {styles.dateText}>{dateTextWord}</Text>     
+        </ImageBackground>  
+        <Pressable  onPress={()=>{navigation.navigate('Calendar')}}>
+          <Image style={styles.calendar} source = {require("../assets/images/calendar.png")}></Image>
+        </Pressable>
         </View> 
 
-      <View name = "Middle Icon">
-        <View name = "Scroll" style = {styles.scroll}>
-          <Image source = {require("../assets/images/daily_overview_bg.png")}></Image>
+      <ImageBackground name = "Middle Icon" style = {styles.middle} source={require("../assets/images/dailyoverviewbg.png")}>
+        
           <Text style = {styles.dailyOverviewText}>Daily Overview</Text>
 
-          <View name = "Left Side Nutrients">
-          <Image style = {styles.gif} source = {require("../assets/gifs/excessive/excessive1.gif")}></Image>
-
-
-
+          <View name= "Nutrient Bars" style={styles.nutrients}>
+            <View name = "Row1" style= {styles.nutrientRow}>
+                <NutrientBar name='Calorie' tier={calorie}/>
+                <NutrientBar name='Sodium' tier={sodium}/>
+            </View>
+            <View name = "Row2" style= {styles.nutrientRow}>
+                <NutrientBar name='Protein' tier={protein}/>
+                <NutrientBar name='Fibre' tier={fibre}/>
+            </View>
+            <View name = "Row3" style= {styles.nutrientRow}>
+                <NutrientBar name='Fat' tier={fat}/>
+                <NutrientBar name='Carbohydrate'tier={carbohydrate}/>
+            </View>
+            <View name = "Row4" style= {styles.nutrientRow}>
+                <NutrientBar name='Sugar' tier={sugar}/>
+                <NutrientBar name='Cholesterol'tier={cholesterol}/>
+            </View>
           </View>
 
-          <View name = "Right Side Nutrients">
+      </ImageBackground>
 
-          </View>
-        </View>
+      <View name = "Bottom Icon" style ={styles.bottom}>
+          <Image style = {styles.creature} source = {require("../assets/images/creature.png")}></Image>
+          <ImageBackground style = {styles.textbox} source = {require("../assets/images/advicebg.png")}>
+            <Text style={styles.text}>
+              High on Fats{'\n'}
+              Cut down on fried foods{'\n'}
+              High on Calories{'\n'}
+              Cut down on starchy foods such as rice and pasta
+              </Text>
+          </ImageBackground>
       </View>
-
-
-      <View name = "Bottom Icon">
-        <View name = "Recommendation" style = {styles.recommendation}>
-          <Image source = {require("../assets/images/creature.png")}></Image>
-          <Image style = {styles.textbox} source = {require("../assets/images/advice_box_bg.png")}></Image>
-        </View>
-      </View>
-      </SafeAreaView>
     </View>
   )
 }
@@ -79,59 +80,84 @@ export default DailyOverview = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection:'column',
     backgroundColor: colors.backgroundColor,
+    alignItems:'center',
   },
-  signOut:{
-    fontFamily: "PixeloidsSanBold",
-    fontSize: 13,
-    alignSelf: 'center',
-    marginTop: 30,
+
+  top:{
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
+    marginTop:50,    
   },
+
   dateBar:{
-    marginTop: -50,
-    marginLeft: 10,
+    alignItems:'center',
+    width:290,
+    height:55,
+    justifyContent:'center',
   },
 
   dateText: {
     fontFamily: 'PixeloidsSanBold',
-    marginTop: -140,
-    marginLeft: 130,
+    fontSize:15
   },
 
   calendar: {
-    marginTop: -184,
-    marginLeft: 175,
+    height:70,
+    width:70,
   },
 
-  scroll: {
-    marginTop: -325,
-    alignItems: 'center',
-    justifyContent: 'center',
-
+  middle:{
+    marginTop:20,
+    height:370,
+    width:370,
+    alignItems:'center'
   },
 
   dailyOverviewText: {
     fontFamily: 'PixeloidsSanBold',
-    marginTop: -515
+    marginTop:20
   },
 
-  recommendation: {
-    marginTop: 250,
+  nutrients:{
+    justifyContent:'space-evenly',
+    alignItems:'center',
+    flexDirection:'column',
+    marginTop:30
+
+  },
+  nutrientRow:{
+    justifyContent:'space-evenly',
+    flexDirection:'row'
+  },
+
+  bottom: {
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent:'space-between',
+    paddingHorizontal:15,
+    marginTop:30
+  },
+  creature:{
+    height:60,
+    width:120,
   },
 
   textbox: {
-    marginTop: -15,
+    position:'absolute',
+    marginTop:40,
+    height:175,
+    width:340,
+    marginTop:40,
+    justifyContent:'flex-start',
+    alignItems:'center'
   },
-
-  gif: {
-    height:100,
-    width: 120,
-    marginTop: 30,
-    marginRight: 125
+  text:{
+    marginTop:'10%',
+    fontFamily:'PixeloidSan',
+    fontSize:12,
+    textAlign:'center',
+    width:'75%',
+    height:'70%'
   }
-
-
 })
