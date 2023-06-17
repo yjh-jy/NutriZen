@@ -3,10 +3,8 @@ import {useState} from 'react';
 import colors from '../../assets/colors/colors';
 
 
-export default Onboarding3 = ({navigation, route}) => {
-  const [height, setHeight] = useState('');
-  const [weight, setWeight] = useState('');
-
+export default Onboarding3 = ({route, navigation}) => {
+  const [age, setAge] = useState('');
 
   return (
     <View style={styles.container}  >
@@ -20,38 +18,21 @@ export default Onboarding3 = ({navigation, route}) => {
               enterKeyHint = "done"
               inputMode = 'numeric'
               textAlign = 'center'
-              maxLength = {3}
-              value = {height}
-              onChangeText={text => setHeight(text)}
+              maxLength = {2}
+              value = {age}
+              onChangeText={text => setAge(text)}
               >
               </TextInput>
 
-              <Text style = {styles.subtitle}>Height in CM</Text>
-
-              <TextInput
-              style={styles.input}
-              autoCapitalize='none'
-              autoCorrect = {false}
-              selectionColor = {colors.backgroundColor}
-              enterKeyHint = "done"
-              inputMode = 'numeric'
-              textAlign = 'center'
-              maxLength = {3}
-              value = {weight}
-              onChangeText={text => setWeight(text)}
-              >
-              </TextInput>
-              
-              <Text style = {styles.subtitle}>Weight in KG</Text>
+              <Text style = {styles.subtitle}>Age</Text>
               
 
-              <Pressable onPress={() => {
-                navigation.navigate('Onboarding4', {
-                  heightParam: height, 
-                  weightParam: weight, 
-                  ageParam: route.params.ageParam, 
-                  nameParam: route.params.nameParam
-                  })}}>
+              <Pressable 
+              onPress={
+                (age !== '' && Number(age) >= 13)
+                ? ()=>{navigation.navigate('Onboarding4', {ageParam: age, genderParam: route.params.genderParam, nameParam: route.params.nameParam})}
+                : () => {alert('Invalid age')}
+                }>
                 <Text style = {styles.proceed}>Proceed</Text>
                 </Pressable>
 
@@ -77,12 +58,12 @@ const styles = StyleSheet.create({
   itemsWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: '70%',
+    marginVertical: '80%',
 
   },
   input: {
     height:49,
-    width:200,
+    width:150,
     backgroundColor: colors.textFieldColor,
     fontSize: 20,
     fontFamily: "PixeloidSan",

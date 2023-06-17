@@ -1,44 +1,15 @@
 import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput, } from 'react-native';
 import {useState} from 'react';
 import colors from '../../assets/colors/colors';
-import LoadingAnimation from '../../components/LoadingAnimation';
-import { collection, doc, setDoc} from "firebase/firestore"; 
-import { db } from '../../firebase';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { auth } from '../../firebase';
 
 
 export default Onboarding4 = ({navigation, route}) => {
-  const [isloading, setIsloading] = useState(false);
-  const [goal, setGoal] = useState('');
-  const name = route.params.nameParam;
-  const age = route.params.ageParam;
-  const height = route.params.heightParam;
-  const weight = route.params.weightParam;
-
-  async function handleSubmit() {
-    setIsloading(true);
-    const userRef = doc(collection(db, "users"));
-    await setDoc(userRef, {
-      name: name,
-      age: age,
-      height: height,
-      weight: weight,
-      goal: goal
-    })
-  user = auth.currentUser;
-  await AsyncStorage.setItem(user.uid, userRef.id);
-  console.log(user.uid, userRef.id);
-  setIsloading(false);
-  }
+  const [height, setHeight] = useState('');
+  const [weight, setWeight] = useState('');
 
 
-  if (isloading) {
-    return <LoadingAnimation/>
-  }
-  
   return (
-    <View style={styles.container}>
+    <View style={styles.container}  >
         <KeyboardAvoidingView>
             <View style = {styles.itemsWrapper}>
               <TextInput
@@ -47,19 +18,49 @@ export default Onboarding4 = ({navigation, route}) => {
               autoCorrect = {false}
               selectionColor = {colors.backgroundColor}
               enterKeyHint = "done"
+              inputMode = 'numeric'
               textAlign = 'center'
-              value = {goal}
-              onChangeText={text => setGoal(text)}
+              maxLength = {3}
+              value = {height}
+              onChangeText={text => setHeight(text)}
               >
               </TextInput>
 
-              <Text style = {styles.subtitle}>Enter your goal</Text>              
+              <Text style = {styles.subtitle}>Height in CM</Text>
 
-              <Pressable onPress={handleSubmit}>
-                <Text style = {styles.proceed}>Submit</Text>
+              <TextInput
+              style={styles.input}
+              autoCapitalize='none'
+              autoCorrect = {false}
+              selectionColor = {colors.backgroundColor}
+              enterKeyHint = "done"
+              inputMode = 'numeric'
+              textAlign = 'center'
+              maxLength = {3}
+              value = {weight}
+              onChangeText={text => setWeight(text)}
+              >
+              </TextInput>
+              
+              <Text style = {styles.subtitle}>Weight in KG</Text>
+              
+
+              <Pressable onPress={
+                ( Number(height) >= 100 && Number(height) <= 220 && Number(weight)>=30 && Number(weight)<= 300 )
+                ? () => {
+                navigation.navigate('Onboarding5', {
+                  heightParam: height, 
+                  weightParam: weight, 
+                  genderParam: route.params.genderParam,
+                  ageParam: route.params.ageParam, 
+                  nameParam: route.params.nameParam
+                  })}
+                : () => {alert('Invalid height/weight')}
+                }>
+                <Text style = {styles.proceed}>Proceed</Text>
                 </Pressable>
-                
-            <Pressable onPress={()=>{navigation.goBack()}}>
+
+              <Pressable onPress={()=>{navigation.goBack()}}>
                 <Text style = {styles.back} >Back</Text>
                 </Pressable>
               
@@ -81,12 +82,12 @@ const styles = StyleSheet.create({
   itemsWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: '80%',
+    marginTop: '70%',
 
   },
   input: {
     height:49,
-    width:220,
+    width:200,
     backgroundColor: colors.textFieldColor,
     fontSize: 20,
     fontFamily: "PixeloidSan",
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontFamily: "PixeloidsSanBold",
-    fontSize: 18,
+    fontSize: 20,
     padding:10
   },
   proceed: {

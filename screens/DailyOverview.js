@@ -1,8 +1,9 @@
-import { StyleSheet, Text, View, Pressable, Image, ImageBackground } from 'react-native'
+import { StyleSheet, Text, View, Pressable, Image, ImageBackground, ScrollView } from 'react-native'
 import {useState} from 'react'
 import colors from '../assets/colors/colors'
 import LoadingAnimation from '../components/LoadingAnimation';
 import NutrientBar from '../components/NutrientBar';
+import IndividualMeals from './IndividualMeals';
 
 export default DailyOverview = ({navigation}) => {
 
@@ -14,7 +15,6 @@ export default DailyOverview = ({navigation}) => {
   const [carbohydrate, setCarbohydrate] = useState('sufficient5');
   const [sugar, setSugar] = useState('lacking5');
   const [cholesterol, setCholesterol] = useState('excessive5');
-
   const [loading, setLoading] = useState(false);
 
   const testing = new Date();
@@ -25,9 +25,13 @@ export default DailyOverview = ({navigation}) => {
   }
 
   return (
+    
+    <ScrollView>
+      
     <View style= {styles.container}>
-
+      
         <View name = "Top Icon" style = {styles.top}>
+          
         <ImageBackground
         source = {require("../assets/images/datebg.png")} style = {styles.dateBar}>
           <Text className="datetext" style = {styles.dateText}>{dateTextWord}</Text>     
@@ -62,6 +66,7 @@ export default DailyOverview = ({navigation}) => {
 
       </ImageBackground>
 
+
       <View name = "Bottom Icon" style ={styles.bottom}>
           <Image style = {styles.creature} source = {require("../assets/images/creature.png")}></Image>
           <ImageBackground style = {styles.textbox} source = {require("../assets/images/advicebg.png")}>
@@ -73,7 +78,18 @@ export default DailyOverview = ({navigation}) => {
               </Text>
           </ImageBackground>
       </View>
+
+      <IndividualMeals/>
+
+
+
+    
     </View>
+    
+    </ScrollView>
+
+    
+    
   )
 }
 
@@ -112,7 +128,7 @@ const styles = StyleSheet.create({
     marginTop:20,
     height:370,
     width:370,
-    alignItems:'center'
+    alignItems:'center',
   },
 
   dailyOverviewText: {
@@ -137,7 +153,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent:'space-between',
     paddingHorizontal:15,
-    marginTop:30
+    marginTop:20,
   },
   creature:{
     height:60,
@@ -145,13 +161,11 @@ const styles = StyleSheet.create({
   },
 
   textbox: {
-    position:'absolute',
-    marginTop:40,
     height:175,
     width:340,
-    marginTop:40,
+    marginTop:-20,
     justifyContent:'flex-start',
-    alignItems:'center'
+    alignItems:'center',
   },
   text:{
     marginTop:'10%',
@@ -159,6 +173,22 @@ const styles = StyleSheet.create({
     fontSize:12,
     textAlign:'center',
     width:'75%',
-    height:'70%'
-  }
+    height:'70%',
+  },
+
+  individual:{
+    marginTop:20,
+    height:370,
+    width:370,
+    alignItems:'center',
+    marginBottom:100,
+  },
+  
+  foodphoto:{
+    height:200,
+    width:300,
+    marginTop:150,
+    borderRadius:75,
+
+  },
 })

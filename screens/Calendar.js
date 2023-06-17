@@ -16,12 +16,6 @@ export default Calendar = ({navigation}) => {
     });
 
   };
-  const [fontsLoaded] = useFonts({
-    "PixeloidSan": require("../assets/fonts/PixeloidSans-mLxMm.ttf"),
-    "PixeloidsSanBold": require("../assets/fonts/PixeloidSansBold-PKnYd.ttf"),
-    "MinimalPixel": require("../assets/fonts/MinimalPixelFont.ttf")
-    });
-
     const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
         await SplashScreen.hideAsync();

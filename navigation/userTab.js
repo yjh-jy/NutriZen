@@ -8,6 +8,7 @@ import DailyOverview from '../screens/DailyOverview';
 import AddMeal from '../screens/AddMeal';
 import Profile from '../screens/Profile';
 import Calendar from '../screens/Calendar';
+import IndividualMeals from '../screens/IndividualMeals';
 import AddMealEntry from '../screens/AddMealEntry';
 
 const Stack = createStackNavigator();
@@ -60,6 +61,7 @@ export default function UserTab() {
             <Stack.Screen name="AddMeal" component={AddMeal} options = {{headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS, gestureEnabled:false}} />
             <Stack.Screen name="AddMealEntry" component={AddMealEntry} options = {{headerShown: false}} />
             <Stack.Screen name="Calendar" component={Calendar} options = {{headerShown: false}} />
+            <Stack.Screen name="IndividualMeals" component={IndividualMeals} options = {{headerShown: false}} />
           </Stack.Navigator>
         </NavigationContainer>
     );
