@@ -4,7 +4,12 @@ import colors from '../../assets/colors/colors';
 
 
 export default Onboarding2 = ({route, navigation}) => {
-  const [age, setAge] = useState('');
+  const [gender, setGender] = useState('');
+  const handleInputChange = (text) => {
+    if (text === 'M' || text === 'F') {
+      setGender(text);
+    }
+  };
 
   return (
     <View style={styles.container}  >
@@ -16,18 +21,18 @@ export default Onboarding2 = ({route, navigation}) => {
               autoCorrect = {false}
               selectionColor = {colors.backgroundColor}
               enterKeyHint = "done"
-              inputMode = 'numeric'
+              inputMode = 'text'
               textAlign = 'center'
-              maxLength = {2}
-              value = {age}
-              onChangeText={text => setAge(text)}
+              maxLength = {1}
+              value = {gender}
+              onChangeText={handleInputChange}
               >
               </TextInput>
 
-              <Text style = {styles.subtitle}>Age</Text>
+              <Text style = {styles.subtitle}>Gender</Text>
               
 
-              <Pressable onPress={()=>{navigation.navigate('Onboarding3', {ageParam: age, nameParam: route.params.nameParam})}}>
+              <Pressable onPress={()=>{navigation.navigate('Onboarding3', {genderParam: gender, nameParam: route.params.nameParam})}}>
                 <Text style = {styles.proceed}>Proceed</Text>
                 </Pressable>
 
