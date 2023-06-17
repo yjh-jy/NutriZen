@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput, } from 'react-native';
 import {useState} from 'react';
 import colors from '../../assets/colors/colors';
-import LoadingAnimation from '../LoadingAnimation';
+import LoadingAnimation from '../../components/LoadingAnimation';
 import { collection, doc, setDoc} from "firebase/firestore"; 
 import { db } from '../../firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';

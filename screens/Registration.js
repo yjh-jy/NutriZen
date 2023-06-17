@@ -3,8 +3,7 @@ import {useState} from 'react'
 import colors from '../assets/colors/colors'
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import {auth} from '../firebase'
-import LoadingAnimation from './LoadingAnimation';
-
+import LoadingAnimation from '../components/LoadingAnimation';
 
 export default Registration = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -25,7 +24,7 @@ export default Registration = ({navigation}) => {
   }
   
   if (isLoading) {
-    return <LoadingAnimation/>
+    return <LoadingAnimation caption='Registering. . .'/>
   }
 
   return (
@@ -50,7 +49,7 @@ export default Registration = ({navigation}) => {
               style={styles.input}
               autoCapitalize='none'
               autoCorrect = {false}
-              autoComplete='new-password'
+              autoComplete='current-password'
               selectionColor = {colors.backgroundColor}
               enterKeyHint = "done"
               value= {password}
