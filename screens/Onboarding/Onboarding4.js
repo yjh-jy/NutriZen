@@ -45,14 +45,18 @@ export default Onboarding4 = ({navigation, route}) => {
               <Text style = {styles.subtitle}>Weight in KG</Text>
               
 
-              <Pressable onPress={() => {
+              <Pressable onPress={
+                ( Number(height) >= 100 && Number(height) <= 220 && Number(weight)>=30 && Number(weight)<= 300 )
+                ? () => {
                 navigation.navigate('Onboarding5', {
                   heightParam: height, 
                   weightParam: weight, 
                   genderParam: route.params.genderParam,
                   ageParam: route.params.ageParam, 
                   nameParam: route.params.nameParam
-                  })}}>
+                  })}
+                : () => {alert('Invalid height/weight')}
+                }>
                 <Text style = {styles.proceed}>Proceed</Text>
                 </Pressable>
 

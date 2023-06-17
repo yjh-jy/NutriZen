@@ -1,10 +1,9 @@
 import { StyleSheet, Text, View, Pressable, Image, ImageBackground, ScrollView } from 'react-native'
 import {useState} from 'react'
 import colors from '../assets/colors/colors'
-import LoadingAnimation from './LoadingAnimation';
-import NutrientBar from './components/NutrientBar';
-import IndividualMeals from './IndividualMeals'
-
+import LoadingAnimation from '../components/LoadingAnimation';
+import NutrientBar from '../components/NutrientBar';
+import IndividualMeals from './IndividualMeals';
 
 export default DailyOverview = ({navigation}) => {
 
@@ -133,15 +132,16 @@ const styles = StyleSheet.create({
   },
 
   dailyOverviewText: {
-    fontFamily: 'PixeloidsSanBold',
-    marginTop:20
+    fontFamily: 'MinimalPixel',
+    fontSize:37,
+    marginTop:13
   },
 
   nutrients:{
     justifyContent:'space-evenly',
     alignItems:'center',
     flexDirection:'column',
-    marginTop:30
+    marginTop:27
 
   },
   nutrientRow:{

@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, Pressable, Image, ImageBackground, ScrollView,SafeAreaView,StatusBar } from 'react-native'
 import {useState} from 'react'
 import colors from '../assets/colors/colors'
-import LoadingAnimation from './LoadingAnimation';
-import NutrientBar from './components/NutrientBar';
+import LoadingAnimation from '../components/LoadingAnimation';
+import NutrientBar from '../components/NutrientBar';
 
 
 export default IndividualMeals = ({navigation}) => {

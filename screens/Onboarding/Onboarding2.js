@@ -1,38 +1,38 @@
 import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput, } from 'react-native';
 import {useState} from 'react';
 import colors from '../../assets/colors/colors';
+import DropdownComponent from '../../components/DropDown';
 
 
 export default Onboarding2 = ({route, navigation}) => {
   const [gender, setGender] = useState('');
-  const handleInputChange = (text) => {
-    if (text === 'M' || text === 'F') {
-      setGender(text);
-    }
-  };
+
+  const genderData = [
+    { label: 'male', value: 'male' },
+    { label: 'female', value: 'female' },
+    { label: 'trans-male', value: 'male' },
+    { label: 'trans-female', value: 'female' },
+    { label: 'lesbian', value: 'female' },
+    { label: 'gay', value: 'male' },
+  ];
 
   return (
-    <View style={styles.container}  >
+    <View style={styles.container}>
         <KeyboardAvoidingView>
             <View style = {styles.itemsWrapper}>
-              <TextInput
-              style={styles.input}
-              autoCapitalize='none'
-              autoCorrect = {false}
-              selectionColor = {colors.backgroundColor}
-              enterKeyHint = "done"
-              inputMode = 'text'
-              textAlign = 'center'
-              maxLength = {1}
-              value = {gender}
-              onChangeText={handleInputChange}
-              >
-              </TextInput>
 
-              <Text style = {styles.subtitle}>Gender</Text>
-              
+              <DropdownComponent 
+              data={genderData} 
+              dropdownlabel={gender ? gender : 'Select your gender'} 
+              icon = 'venus-mars' 
+              value={gender}
+              setValue={setGender}
+              />              
 
-              <Pressable onPress={()=>{navigation.navigate('Onboarding3', {genderParam: gender, nameParam: route.params.nameParam})}}>
+              <Pressable 
+              onPress={gender 
+              ? ()=>{navigation.navigate('Onboarding3', {genderParam: gender, nameParam: route.params.nameParam})} 
+              : () => {alert('Please select your gender')}}>
                 <Text style = {styles.proceed}>Proceed</Text>
                 </Pressable>
 
@@ -40,10 +40,8 @@ export default Onboarding2 = ({route, navigation}) => {
                 <Text style = {styles.back} >Back</Text>
                 </Pressable>
               
-              
-
             </View>
-            </KeyboardAvoidingView>
+          </KeyboardAvoidingView>
     </View>
   )
 }

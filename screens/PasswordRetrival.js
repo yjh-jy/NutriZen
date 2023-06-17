@@ -3,8 +3,7 @@ import {useState} from 'react'
 import colors from '../assets/colors/colors';
 import {auth} from '../firebase';
 import { sendPasswordResetEmail } from 'firebase/auth';
-import LoadingAnimation from './LoadingAnimation';
-
+import LoadingAnimation from '../components/LoadingAnimation';
 
 export default PasswordRetrival = ({navigation}) => {
   const [email, enterEmail] = useState('');

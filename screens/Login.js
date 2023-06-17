@@ -3,7 +3,7 @@ import {useState} from 'react';
 import colors from '../assets/colors/colors';
 import { signInWithEmailAndPassword} from 'firebase/auth';
 import {auth} from '../firebase'
-import LoadingAnimation from './LoadingAnimation';
+import LoadingAnimation from '../components/LoadingAnimation';
 
 export default Login = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -20,7 +20,7 @@ export default Login = ({navigation}) => {
 }
 
   if (isLoading) {
-    return <LoadingAnimation/>
+    return <LoadingAnimation caption='Logging in. . .'/>
   }
 
   return (

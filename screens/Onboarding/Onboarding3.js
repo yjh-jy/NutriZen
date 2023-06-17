@@ -27,7 +27,12 @@ export default Onboarding3 = ({route, navigation}) => {
               <Text style = {styles.subtitle}>Age</Text>
               
 
-              <Pressable onPress={()=>{navigation.navigate('Onboarding4', {ageParam: age, genderParam: route.params.genderParam, nameParam: route.params.nameParam})}}>
+              <Pressable 
+              onPress={
+                (age !== '' && Number(age) >= 13)
+                ? ()=>{navigation.navigate('Onboarding4', {ageParam: age, genderParam: route.params.genderParam, nameParam: route.params.nameParam})}
+                : () => {alert('Invalid age')}
+                }>
                 <Text style = {styles.proceed}>Proceed</Text>
                 </Pressable>
 
