@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, Pressable, Image, ImageBackground, ScrollView,SafeAreaView,StatusBar } from 'react-native'
 import {useState} from 'react'
-import colors from '../assets/colors/colors'
-import LoadingAnimation from '../components/LoadingAnimation';
-import NutrientBar from '../components/NutrientBar';
+import colors from '../../assets/colors/colors'
+import LoadingAnimation from '../../components/LoadingAnimation';
+import NutrientBar from '../../components/NutrientBar';
 
 
 export default IndividualMeals = ({navigation}) => {
@@ -27,10 +27,10 @@ export default IndividualMeals = ({navigation}) => {
   return (
 
     <View style={styles.container}>
-    <Image style={styles.foodphoto} source ={require("../assets/images/steak.png")}></Image>
+    <Image style={styles.foodphoto} source ={require("../../assets/images/steak.png")}></Image>
 
 
-    <ImageBackground name = "Individual Icon" style = {styles.individual} source={require("../assets/images/dailyoverviewbg.png")}>
+    <ImageBackground name = "Individual Icon" style = {styles.individual} source={require("../../assets/images/dailyoverviewbg.png")}>
       
       <Text style = {styles.dailyOverviewText}>Individual Meals</Text>
 

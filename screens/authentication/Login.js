@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput } from 'react-native';
 import {useState} from 'react';
-import colors from '../assets/colors/colors';
+import colors from '../../assets/colors/colors';
 import { signInWithEmailAndPassword} from 'firebase/auth';
-import {auth} from '../firebase'
-import LoadingAnimation from '../components/LoadingAnimation';
+import {auth} from '../../firebase';
+import LoadingAnimation from '../../components/LoadingAnimation';
 
 export default Login = ({navigation}) => {
   const [email, setEmail] = useState('');

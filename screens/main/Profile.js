@@ -2,13 +2,13 @@ import { StyleSheet, Text, View, SafeAreaView, Pressable, Image } from 'react-na
 import {useCallback} from 'react'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import colors from '../assets/colors/colors'
-import { auth } from '../firebase';
+import colors from '../../assets/colors/colors'
+import { auth } from '../../firebase';
 import { signOut } from 'firebase/auth';
 
 SplashScreen.preventAutoHideAsync();
 
-export default Calendar = ({navigation}) => {
+export default Profile = ({navigation}) => {
   const handleSignOut = () => {
     signOut(auth)
     .catch((error) => {
@@ -16,6 +16,12 @@ export default Calendar = ({navigation}) => {
     });
 
   };
+  const [fontsLoaded] = useFonts({
+    "PixeloidSan": require("../../assets/fonts/PixeloidSans-mLxMm.ttf"),
+    "PixeloidsSanBold": require("../../assets/fonts/PixeloidSansBold-PKnYd.ttf"),
+    "MinimalPixel": require("../../assets/fonts/MinimalPixelFont.ttf")
+    });
+
     const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
         await SplashScreen.hideAsync();
@@ -29,7 +35,7 @@ export default Calendar = ({navigation}) => {
   return (
     <View style= {styles.container}onLayout={onLayoutRootView}>
       <SafeAreaView>
-      <Text>Calendar</Text>
+      <Text>Profile</Text>
 
       <Pressable onPress={handleSignOut}>
         <Text style = {styles.signOut} >Sign Out</Text>

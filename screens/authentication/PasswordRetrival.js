@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput} from 'react-native';
 import {useState} from 'react'
-import colors from '../assets/colors/colors';
-import {auth} from '../firebase';
+import colors from '../../assets/colors/colors';
+import {auth} from '../../firebase';
 import { sendPasswordResetEmail } from 'firebase/auth';
-import LoadingAnimation from '../components/LoadingAnimation';
+import LoadingAnimation from '../../components/LoadingAnimation';
 
 export default PasswordRetrival = ({navigation}) => {
   const [email, enterEmail] = useState('');

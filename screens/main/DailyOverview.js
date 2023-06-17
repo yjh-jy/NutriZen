@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, Pressable, Image, ImageBackground, ScrollView } from 'react-native'
 import {useState} from 'react'
-import colors from '../assets/colors/colors'
-import LoadingAnimation from '../components/LoadingAnimation';
-import NutrientBar from '../components/NutrientBar';
+import colors from '../../assets/colors/colors'
+import LoadingAnimation from '../../components/LoadingAnimation';
+import NutrientBar from '../../components/NutrientBar';
 import IndividualMeals from './IndividualMeals';
 
 export default DailyOverview = ({navigation}) => {
@@ -33,15 +33,15 @@ export default DailyOverview = ({navigation}) => {
         <View name = "Top Icon" style = {styles.top}>
           
         <ImageBackground
-        source = {require("../assets/images/datebg.png")} style = {styles.dateBar}>
+        source = {require("../../assets/images/datebg.png")} style = {styles.dateBar}>
           <Text className="datetext" style = {styles.dateText}>{dateTextWord}</Text>     
         </ImageBackground>  
         <Pressable  onPress={()=>{navigation.navigate('Calendar')}}>
-          <Image style={styles.calendar} source = {require("../assets/images/calendar.png")}></Image>
+          <Image style={styles.calendar} source = {require("../../assets/images/calendar.png")}></Image>
         </Pressable>
         </View> 
 
-      <ImageBackground name = "Middle Icon" style = {styles.middle} source={require("../assets/images/dailyoverviewbg.png")}>
+      <ImageBackground name = "Middle Icon" style = {styles.middle} source={require("../../assets/images/dailyoverviewbg.png")}>
         
           <Text style = {styles.dailyOverviewText}>Daily Overview</Text>
 
@@ -68,8 +68,8 @@ export default DailyOverview = ({navigation}) => {
 
 
       <View name = "Bottom Icon" style ={styles.bottom}>
-          <Image style = {styles.creature} source = {require("../assets/images/creature.png")}></Image>
-          <ImageBackground style = {styles.textbox} source = {require("../assets/images/advicebg.png")}>
+          <Image style = {styles.creature} source = {require("../../assets/images/creature.png")}></Image>
+          <ImageBackground style = {styles.textbox} source = {require("../../assets/images/advicebg.png")}>
             <Text style={styles.text}>
               High on Fats{'\n'}
               Cut down on fried foods{'\n'}

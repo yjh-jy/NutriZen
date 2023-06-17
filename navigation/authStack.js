@@ -2,10 +2,10 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import Entrance from '../screens/Entrance'
-import Login from '../screens/Login'
-import Registration from '../screens/Registration'
-import PasswordRetrival from '../screens/PasswordRetrival'
+import Entrance from '../screens/authentication/Entrance';
+import Login from '../screens/authentication/Login';
+import Registration from '../screens/authentication/Registration';
+import PasswordRetrival from '../screens/authentication/PasswordRetrival';
 
 const Stack = createStackNavigator();
 

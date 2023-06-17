@@ -2,15 +2,15 @@ import { StyleSheet, Text, View, SafeAreaView, Pressable, Image } from 'react-na
 import {useCallback} from 'react'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import colors from '../assets/colors/colors'
+import colors from '../../assets/colors/colors'
 
 SplashScreen.preventAutoHideAsync();
 
 export default Entrance = ({navigation}) => {
     const [fontsLoaded] = useFonts({
-    "PixeloidSan": require("../assets/fonts/PixeloidSans-mLxMm.ttf"),
-    "PixeloidsSanBold": require("../assets/fonts/PixeloidSansBold-PKnYd.ttf"),
-    "MinimalPixel": require("../assets/fonts/MinimalPixelFont.ttf")
+    "PixeloidSan": require("../../assets/fonts/PixeloidSans-mLxMm.ttf"),
+    "PixeloidsSanBold": require("../../assets/fonts/PixeloidSansBold-PKnYd.ttf"),
+    "MinimalPixel": require("../../assets/fonts/MinimalPixelFont.ttf")
     });
 
     const onLayoutRootView = useCallback(async () => {
@@ -31,7 +31,7 @@ export default Entrance = ({navigation}) => {
                 <Text style = {styles.title}>NutriZen</Text>
                 <Image 
                 style = {styles.image} 
-                source= {require("../assets/images/creature_loading_non_looping.gif")}
+                source= {require("../../assets/images/creature_loading_non_looping.gif")}
                 >
                 </Image>
                 <Pressable onPress={() => navigation.navigate('Login')}>

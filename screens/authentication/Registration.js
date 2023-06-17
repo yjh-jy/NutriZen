@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput} from 'react-native'
 import {useState} from 'react'
-import colors from '../assets/colors/colors'
+import colors from '../../assets/colors/colors'
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
-import {auth} from '../firebase'
-import LoadingAnimation from '../components/LoadingAnimation';
+import {auth} from '../../firebase'
+import LoadingAnimation from '../../components/LoadingAnimation';
 
 export default Registration = ({navigation}) => {
   const [email, setEmail] = useState('');

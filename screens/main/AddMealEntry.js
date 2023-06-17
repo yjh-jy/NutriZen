@@ -1,14 +1,13 @@
-import { StyleSheet, Text, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, KeyboardAvoidingView } from 'react-native'
 import {useState} from 'react'
-import colors from '../assets/colors/colors'
-import LoadingAnimation from '../components/LoadingAnimation';
-import DropdownComponent from '../components/DropDown';
-import { class_names } from '../assets/model/class_names';
+import colors from '../../assets/colors/colors'
+import LoadingAnimation from '../../components/LoadingAnimation'
+import DropdownComponent from '../../components/DropDown';
+import { class_names } from '../../assets/model/class_names';
 import { TextInput } from 'react-native-gesture-handler';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import axios from 'axios';
 import {API_KEY_CALORIE_NINJA} from '@env';
-import { KeyboardAvoidingView } from 'react-native';
 
 
 export default function AddMealEntry({navigation, route}) {

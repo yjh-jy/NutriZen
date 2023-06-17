@@ -4,12 +4,12 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import DailyOverview from '../screens/DailyOverview';
-import AddMeal from '../screens/AddMeal';
-import Profile from '../screens/Profile';
-import Calendar from '../screens/Calendar';
-import IndividualMeals from '../screens/IndividualMeals';
-import AddMealEntry from '../screens/AddMealEntry';
+import DailyOverview from '../screens/main/DailyOverview';
+import AddMeal from '../screens/main/AddMeal';
+import Profile from '../screens/main/Profile';
+import Calendar from '../screens/main/Calendar';
+import IndividualMeals from '../screens/main/IndividualMeals';
+import AddMealEntry from '../screens/main/AddMealEntry';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();

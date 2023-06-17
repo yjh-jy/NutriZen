@@ -1,16 +1,16 @@
 import { StyleSheet, Text, View, Pressable, ImageBackground } from 'react-native'
 import {useRef, useState, useEffect} from 'react'
-import colors from '../assets/colors/colors'
+import colors from '../../assets/colors/colors';
 import { Camera, CameraType } from 'expo-camera';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import LoadingAnimation from '../components/LoadingAnimation';
+import LoadingAnimation from '../../components/LoadingAnimation';
 import * as ImagePicker from 'expo-image-picker';
 import * as tf from '@tensorflow/tfjs'
 import {bundleResourceIO, decodeJpeg} from '@tensorflow/tfjs-react-native'
 import * as FileSystem from 'expo-file-system';
 import { manipulateAsync } from 'expo-image-manipulator';
-import {class_names} from '../assets/model/class_names';
+import {class_names} from '../../assets/model/class_names';
 
 
 export default AddMeal = ({navigation}) => {
@@ -30,8 +30,8 @@ export default AddMeal = ({navigation}) => {
         await tf.ready(); // Wait for Tensorflow.js to get ready
         setIsTfReady(true);
         // Bundle the model files and load the model:
-        const modelJSON = require('../assets/model/model.json');
-        const modelWeights = require('../assets/model/group1-shard.bin');
+        const modelJSON = require('../../assets/model/model.json');
+        const modelWeights = require('../../assets/model/group1-shard.bin');
         const loadedModel = await tf.loadGraphModel(
           bundleResourceIO(modelJSON, modelWeights)
         ).catch((e) => {
