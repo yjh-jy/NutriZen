@@ -1,13 +1,13 @@
-import { StyleSheet, Text, View, Pressable, Image, ImageBackground, ScrollView,SafeAreaView,StatusBar } from 'react-native'
-import {useState} from 'react'
+import { StyleSheet, Text, View, Pressable, Image, ImageBackground } from 'react-native'
+import {useState, useEffect} from 'react'
 import colors from '../../assets/colors/colors'
 import LoadingAnimation from '../../components/LoadingAnimation';
 import NutrientBar from '../../components/NutrientBar';
+import { retrieveRNI } from '../../hooks/retrieveRNI';
 
+export default IndividualMeals = ({navigation, route}) => {
 
-export default IndividualMeals = ({navigation}) => {
-
-  const [calorie, setCalorie] = useState('lacking4');
+  const [calorie, setCalorie] = useState('lacking1');
   const [sodium, setSodium] = useState('excessive6');
   const [protein, setProtein] = useState('sufficient4');
   const [fibre, setFibre] = useState('excessive12');
@@ -17,8 +17,33 @@ export default IndividualMeals = ({navigation}) => {
   const [cholesterol, setCholesterol] = useState('excessive5');
   const [loading, setLoading] = useState(false);
 
+  const mealNutrients = route?.params?.mealnutrientsParam;
+  const imageUri = route?.params?.imageuriParam;
+  const prediction = route?.params?.predictionParam;
+
+  const updateNutrientBars = (RNI) => {
+    (mealNutrients.calorie / RNI.calorie)
+  };
+
+  function rawToState() {
+  
+  }
+
+  useEffect(() => {
+    retrieveRNI()
+    .then(
+      (data) => { 
+        const RNI = data;
+        console.log(RNI);
+        // updateNutrientBars(RNI);
+      }
+      );
+    }, []);
+
+
   const testing = new Date();
   const dateTextWord = `${testing.getDate()}/${testing.getMonth()+1}/${testing.getFullYear()}`; 
+
 
   if (loading) {
     return <LoadingAnimation/>
@@ -27,33 +52,51 @@ export default IndividualMeals = ({navigation}) => {
   return (
 
     <View style={styles.container}>
-    <Image style={styles.foodphoto} source ={require("../../assets/images/steak.png")}></Image>
+        <View name = "Top Icon" style = {styles.top}>
+          
+        <ImageBackground
+        source = {require("../../assets/images/datebg.png")} style = {styles.dateBar}>
+          <Text className="datetext" style = {styles.dateText}>{dateTextWord}</Text>     
+        </ImageBackground>  
+        <Pressable  onPress={()=>{navigation.navigate('Calendar')}}>
+          <Image style={styles.calendar} source = {require("../../assets/images/calendar.png")}></Image>
+        </Pressable>
 
+      </View> 
 
-    <ImageBackground name = "Individual Icon" style = {styles.individual} source={require("../../assets/images/dailyoverviewbg.png")}>
-      
-      <Text style = {styles.dailyOverviewText}>Individual Meals</Text>
+      <View style={styles.middle}>
+        <Pressable onPress={()=>{}}>
+          <Image style={styles.foodphoto} source ={{uri: imageUri}} resizeMode='cover'/>
+        </Pressable>
 
-      <View name= "Nutrient Bars" style={styles.nutrients}>
-        <View name = "Row1" style= {styles.nutrientRow}>
-            <NutrientBar name='Calorie' tier={calorie}/>
-            <NutrientBar name='Sodium' tier={sodium}/>
-        </View>
-        <View name = "Row2" style= {styles.nutrientRow}>
-            <NutrientBar name='Protein' tier={protein}/>
-            <NutrientBar name='Fibre' tier={fibre}/>
-        </View>
-        <View name = "Row3" style= {styles.nutrientRow}>
-            <NutrientBar name='Fat' tier={fat}/>
-            <NutrientBar name='Carbohydrate'tier={carbohydrate}/>
-        </View>
-        <View name = "Row4" style= {styles.nutrientRow}>
-            <NutrientBar name='Sugar' tier={sugar}/>
-            <NutrientBar name='Cholesterol'tier={cholesterol}/>
-        </View>
+        <ImageBackground name = "Individual Icon" style = {styles.individual} source={require("../../assets/images/individualmealsbg.png")}>
+          
+          <Text style = {styles.individualMealsText}>Individual Meals</Text>
+
+          <Text style = {styles.mealName}>{prediction}</Text>
+
+          <View name= "Nutrient Bars" style={styles.nutrients}>
+            <View name = "Row1" style= {styles.nutrientRow}>
+                <NutrientBar name='Calorie' tier={calorie}/>
+                <NutrientBar name='Sodium' tier={sodium}/>
+            </View>
+            <View name = "Row2" style= {styles.nutrientRow}>
+                <NutrientBar name='Protein' tier={protein}/>
+                <NutrientBar name='Fibre' tier={fibre}/>
+            </View>
+            <View name = "Row3" style= {styles.nutrientRow}>
+                <NutrientBar name='Fat' tier={fat}/>
+                <NutrientBar name='Carbohydrate'tier={carbohydrate}/>
+            </View>
+            <View name = "Row4" style= {styles.nutrientRow}>
+                <NutrientBar name='Sugar' tier={sugar}/>
+                <NutrientBar name='Cholesterol'tier={cholesterol}/>
+            </View>
+          </View>
+
+        </ImageBackground>
       </View>
-
-    </ImageBackground>
+      
     </View>
   )
 }
@@ -90,22 +133,43 @@ const styles = StyleSheet.create({
   },
 
   middle:{
-    marginTop:20,
+    marginTop:10,
     height:370,
     width:370,
     alignItems:'center',
   },
 
-  dailyOverviewText: {
-    fontFamily: 'PixeloidsSanBold',
-    marginTop:20
+  foodphoto:{
+    height:150,
+    width:350,
+    borderRadius:55,
+  },
+  individual:{
+    marginTop:30,
+    height:450,
+    width:360,
+    alignItems:'center',
+    marginBottom:100,
+  },
+
+  individualMealsText: {
+    fontFamily: 'MinimalPixel',
+    fontSize:37,
+    marginTop:10
+  },
+
+  mealName: {
+    fontFamily: 'PixeloidSan',
+    marginTop:30,
+    fontSize:15,
+    textAlign: 'center'
   },
 
   nutrients:{
     justifyContent:'space-evenly',
     alignItems:'center',
     flexDirection:'column',
-    marginTop:30
+    marginTop:20
 
   },
   nutrientRow:{
@@ -140,19 +204,4 @@ const styles = StyleSheet.create({
     height:'70%',
   },
 
-  individual:{
-    marginTop:20,
-    height:370,
-    width:370,
-    alignItems:'center',
-    marginBottom:100,
-  },
-  
-  foodphoto:{
-    height:200,
-    width:300,
-    marginTop:150,
-    borderRadius:75,
-
-  },
 })
