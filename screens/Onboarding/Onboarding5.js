@@ -33,9 +33,9 @@ export default Onboarding5 = ({navigation, route}) => {
     await setDoc(userRef, {
       name: name,
       gender: gender,
-      age: age,
-      height: height,
-      weight: weight,
+      age: Number(age),
+      height: Number(height),
+      weight: Number(weight),
       fitness_constant: fitness
     })
   user = auth.currentUser;
