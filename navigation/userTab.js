@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
+import { CardStyleInterpolators, TransitionPresets, createStackNavigator } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import DailyOverview from '../screens/main/DailyOverview';
@@ -17,6 +17,20 @@ const Tab = createBottomTabNavigator();
 const EmptyScreen = () => {
   return null
 }
+const DailyOverviewStack = createStackNavigator();
+
+function DailyOverviewStackScreen() {
+  return (
+    <DailyOverviewStack.Navigator>
+      <Stack.Screen name="DailyOverview" component={DailyOverview} options = {{headerShown: false, gestureEnabled:false}}/>
+      <Stack.Screen name="IndividualMeals" component={IndividualMeals} 
+      options = {{headerShown: false, gestureEnabled:false, 
+        cardStyleInterpolator: Platform.OS === 'ios' 
+        ? CardStyleInterpolators.forVerticalIOS 
+        : CardStyleInterpolators.forFadeFromBottomAndroid}}/>
+    </DailyOverviewStack.Navigator>
+  )
+}
 
 function MainTabs() {
   return (
@@ -25,7 +39,7 @@ function MainTabs() {
             tabBarIcon: ({ focused, color, size }) => {
               let iconName;
 
-              if (route.name === 'DailyOverview') {
+              if (route.name === 'DailyOverviewStackScreen') {
                 iconName = 'home-outline';
               } else if (route.name === 'AddMealContainer') {
                 iconName = 'add-outline';
@@ -40,7 +54,7 @@ function MainTabs() {
             tabBarInactiveTintColor: 'gray',
             tabBarShowLabel: false,
           })}>
-          <Tab.Screen name="DailyOverview" component={DailyOverview} options = {{headerShown: false}} />
+          <Tab.Screen name="DailyOverviewStackScreen" component={DailyOverviewStackScreen} options = {{headerShown: false}} />
           <Tab.Screen name="AddMealContainer" component={EmptyScreen} options = {{headerShown: false}}
             listeners={({navigation})=> ({
               tabPress : e => {
@@ -49,20 +63,22 @@ function MainTabs() {
               }
               })}/>
           <Tab.Screen options = {{headerShown: false}}name="Profile" component={Profile} />
+
   </Tab.Navigator>
   )
 }
+const RootStack = createStackNavigator();
+
 
 export default function UserTab() {
     return (
         <NavigationContainer>
-          <Stack.Navigator>
+          <RootStack.Navigator>
             <Stack.Screen name="MainTabs" component={MainTabs}  options = {{headerShown: false}}/>
             <Stack.Screen name="AddMeal" component={AddMeal} options = {{headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS, gestureEnabled:false}} />
             <Stack.Screen name="AddMealEntry" component={AddMealEntry} options = {{headerShown: false}} />
             <Stack.Screen name="Calendar" component={Calendar} options = {{headerShown: false}} />
-            <Stack.Screen name="IndividualMeals" component={IndividualMeals} options = {{headerShown: false}} />
-          </Stack.Navigator>
+          </RootStack.Navigator>
         </NavigationContainer>
     );
   }
