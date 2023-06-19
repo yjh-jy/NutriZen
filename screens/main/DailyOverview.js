@@ -1,9 +1,11 @@
-import { StyleSheet, Text, View, Pressable, Image, ImageBackground, ScrollView } from 'react-native'
-import {useState} from 'react'
+import { StyleSheet, Text, View, Pressable, Image, ImageBackground, FlatList, RefreshControl } from 'react-native'
+import {useEffect, useState} from 'react'
 import colors from '../../assets/colors/colors'
 import LoadingAnimation from '../../components/LoadingAnimation';
 import NutrientBar from '../../components/NutrientBar';
-import IndividualMeals from './IndividualMeals';
+import 'react-native-gesture-handler';
+import { retrieveRNI } from '../../hooks/retrieveRNI';
+
 
 export default DailyOverview = ({navigation}) => {
 
@@ -18,78 +20,96 @@ export default DailyOverview = ({navigation}) => {
   const [loading, setLoading] = useState(false);
 
   const testing = new Date();
-  const dateTextWord = `${testing.getDate()}/${testing.getMonth()+1}/${testing.getFullYear()}`; 
+  const dateTextWord = `${testing.getDate()}/${testing.getMonth()+1}/${testing.getFullYear()}`;
+  const [refreshing, setRefreshing] = useState(false);
+
+  useEffect(() => {
+    if (refreshing) {
+      // do your heavy or asynchronous data fetching & update your state
+      retrieveRNI().then(
+        (data) => {
+          const RNI = data;
+          console.log(RNI);
+        });
+      // set the refreshing back to false
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  const DATA = [
+    {
+      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+      title: 'First Item',
+    },
+  ];
+
+  const Item = ({title}) => (
+    <View style={styles.container}>
+      <View name="Top Icon" style={styles.top}>
+        <ImageBackground source={require("../../assets/images/datebg.png")} style={styles.dateBar}>
+          <Text className="datetext" style={styles.dateText}>
+            {dateTextWord}
+          </Text>
+        </ImageBackground>
+        <Pressable onPress={() => { navigation.navigate('Calendar') }}>
+          <Image style={styles.calendar} source={require("../../assets/images/calendar.png")} />
+        </Pressable>
+      </View>
+    
+      <ImageBackground name="Middle Icon" style={styles.middle} source={require("../../assets/images/dailyoverviewbg.png")}>
+        <Text style={styles.dailyOverviewText}>Daily Overview</Text>
+    
+        <View name="Nutrient Bars" style={styles.nutrients}>
+          <View name="Row1" style={styles.nutrientRow}>
+            <NutrientBar name='Calorie' tier={calorie} />
+            <NutrientBar name='Sodium' tier={sodium} />
+          </View>
+          <View name="Row2" style={styles.nutrientRow}>
+            <NutrientBar name='Protein' tier={protein} />
+            <NutrientBar name='Fibre' tier={fibre} />
+          </View>
+          <View name="Row3" style={styles.nutrientRow}>
+            <NutrientBar name='Fat' tier={fat} />
+            <NutrientBar name='Carbohydrate' tier={carbohydrate} />
+          </View>
+          <View name="Row4" style={styles.nutrientRow}>
+            <NutrientBar name='Sugar' tier={sugar} />
+            <NutrientBar name='Cholesterol' tier={cholesterol} />
+          </View>
+        </View>
+      </ImageBackground>
+    
+      <View name="Bottom Icon" style={styles.bottom}>
+        <Pressable onPress={()=>{navigation.navigate('IndividualMeals')}}>
+        <Image style={styles.creature} source={require("../../assets/images/creature.png")} />
+        </Pressable>
+        <ImageBackground style={styles.textbox} source={require("../../assets/images/advicebg.png")}>
+          <Text style={styles.text}>
+            High on Fats{'\n'}
+            Cut down on fried foods{'\n'}
+            High on Calories{'\n'}
+            Cut down on starchy foods such as rice and pasta
+          </Text>
+        </ImageBackground>
+      </View>
+    
+    </View>
+  );
 
   if (loading) {
     return <LoadingAnimation/>
   }
 
   return (
-    
-    <ScrollView>
-      
-    <View style= {styles.container}>
-      
-        <View name = "Top Icon" style = {styles.top}>
-          
-        <ImageBackground
-        source = {require("../../assets/images/datebg.png")} style = {styles.dateBar}>
-          <Text className="datetext" style = {styles.dateText}>{dateTextWord}</Text>     
-        </ImageBackground>  
-        <Pressable  onPress={()=>{navigation.navigate('Calendar')}}>
-          <Image style={styles.calendar} source = {require("../../assets/images/calendar.png")}></Image>
-        </Pressable>
-        </View> 
+    <FlatList
+    data={DATA}
+    renderItem={({item}) => <Item title={item.title} />}
+    keyExtractor={item => item.id}
+    refreshing={refreshing}
+    onRefresh={() => setRefreshing(true)}
+    style={{backgroundColor:colors.backgroundColor}}
+    />
 
-      <ImageBackground name = "Middle Icon" style = {styles.middle} source={require("../../assets/images/dailyoverviewbg.png")}>
-        
-          <Text style = {styles.dailyOverviewText}>Daily Overview</Text>
-
-          <View name= "Nutrient Bars" style={styles.nutrients}>
-            <View name = "Row1" style= {styles.nutrientRow}>
-                <NutrientBar name='Calorie' tier={calorie}/>
-                <NutrientBar name='Sodium' tier={sodium}/>
-            </View>
-            <View name = "Row2" style= {styles.nutrientRow}>
-                <NutrientBar name='Protein' tier={protein}/>
-                <NutrientBar name='Fibre' tier={fibre}/>
-            </View>
-            <View name = "Row3" style= {styles.nutrientRow}>
-                <NutrientBar name='Fat' tier={fat}/>
-                <NutrientBar name='Carbohydrate'tier={carbohydrate}/>
-            </View>
-            <View name = "Row4" style= {styles.nutrientRow}>
-                <NutrientBar name='Sugar' tier={sugar}/>
-                <NutrientBar name='Cholesterol'tier={cholesterol}/>
-            </View>
-          </View>
-
-      </ImageBackground>
-
-
-      <View name = "Bottom Icon" style ={styles.bottom}>
-          <Image style = {styles.creature} source = {require("../../assets/images/creature.png")}></Image>
-          <ImageBackground style = {styles.textbox} source = {require("../../assets/images/advicebg.png")}>
-            <Text style={styles.text}>
-              High on Fats{'\n'}
-              Cut down on fried foods{'\n'}
-              High on Calories{'\n'}
-              Cut down on starchy foods such as rice and pasta
-              </Text>
-          </ImageBackground>
-      </View>
-
-      <IndividualMeals/>
-
-
-
-    
-    </View>
-    
-    </ScrollView>
-
-    
-    
   )
 }
 
@@ -129,6 +149,12 @@ const styles = StyleSheet.create({
     height:370,
     width:370,
     alignItems:'center',
+  },
+    foodphoto:{
+    height:200,
+    width:300,
+    marginTop:150,
+    borderRadius:75,
   },
 
   dailyOverviewText: {
@@ -184,11 +210,5 @@ const styles = StyleSheet.create({
     marginBottom:100,
   },
   
-  foodphoto:{
-    height:200,
-    width:300,
-    marginTop:150,
-    borderRadius:75,
 
-  },
 })

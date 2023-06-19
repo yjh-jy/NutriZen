@@ -9,6 +9,25 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import axios from 'axios';
 import {API_KEY_CALORIE_NINJA} from '@env';
 
+const combineNutrients = async (mealNutrients) => {
+  await mealNutrients.length === 1 ? null : hasMutipleItems = true; //changing control flow
+      if (hasMutipleItems) {
+        const combinedNutrients = mealNutrients.reduce((accumulator, item) => {
+          for (const key in item) {
+            if (typeof item[key] === 'number') {
+              accumulator[key] = (accumulator[key] || 0) + item[key];
+            } else if (typeof item[key] === 'string') {
+              accumulator[key] = (accumulator[key] || ' ') + item[key];
+            }
+          }
+          return accumulator;
+        }, {});
+        mealNutrients.splice(0, mealNutrients.length, combinedNutrients);
+      } else {
+        mealNutrients = mealNutrients[0]
+      };
+}
+
 
 export default function AddMealEntry({navigation, route}) {
   const [prediction, setPrediction] = useState(route.params.predictionParam);
@@ -16,10 +35,10 @@ export default function AddMealEntry({navigation, route}) {
   const [portionWeight, setPortionWeight] = useState(null);
   const [quantity, setQuantity] = useState('1');
   const [isLoading, setIsLoading] = useState(false);
+
   const image = route.params.imageParam;
 
-  console.log(quantity);
-  //
+
   const portionSizeData = [
     { label: 'one-quarter', value: 0.25 },
     { label: 'half', value: 0.50 },
@@ -35,6 +54,7 @@ export default function AddMealEntry({navigation, route}) {
   const handleAddMeal = async () => {
     try {
       setIsLoading(true);
+      let hasMutipleItems = false;
       const query = portionSize === 1
         ? portionWeight // if portionWeight is specified, 
           ? `${portionWeight}g ${prediction}` // query with the portionWeight 
@@ -50,7 +70,10 @@ export default function AddMealEntry({navigation, route}) {
         },
       });
 
-      let mealNutrients = response.data.items[0];
+      let mealNutrients = response.data.items; // saving the nutrietns
+      console.log(mealNutrients);
+      combineNutrients(mealNutrients);
+    
       // applying the portionSize to each nutrient
       for (let nutrient of Object.keys(mealNutrients)) {
         if(typeof mealNutrients[nutrient] == "number" ) {
@@ -62,9 +85,9 @@ export default function AddMealEntry({navigation, route}) {
       };
       console.log(mealNutrients);
       setIsLoading(false);
-      // navigation.navigate('IndividualMeals');
+      navigation.navigate('IndividualMeals', {mealnutrientsParam: mealNutrients, imageuriParam: image.uri, predictionParam: prediction});
     } catch (error) {
-      console.error(error);
+      alert(error);
     }
   }
 
