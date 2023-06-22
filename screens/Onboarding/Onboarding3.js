@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput, } from 'react-native';
+import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput } from 'react-native';
 import {useState} from 'react';
 import colors from '../../assets/colors/colors';
 
@@ -12,11 +12,10 @@ export default Onboarding3 = ({route, navigation}) => {
             <View style = {styles.itemsWrapper}>
               <TextInput
               style={styles.input}
-              autoCapitalize='none'
               autoCorrect = {false}
               selectionColor = {colors.backgroundColor}
               enterKeyHint = "done"
-              inputMode = 'numeric'
+              keyboardType = 'number-pad'
               textAlign = 'center'
               maxLength = {2}
               value = {age}
