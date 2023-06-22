@@ -1,80 +1,115 @@
-import { StyleSheet, Text, View, Pressable, Image, ImageBackground, FlatList, RefreshControl } from 'react-native'
-import {useEffect, useState} from 'react'
+import { StyleSheet, Text, View, Pressable, Image, ImageBackground, FlatList, SafeAreaView } from 'react-native'
+import {useCallback, useEffect, useState} from 'react'
 import colors from '../../assets/colors/colors'
-import LoadingAnimation from '../../components/LoadingAnimation';
 import NutrientBar from '../../components/NutrientBar';
-import 'react-native-gesture-handler';
 import { retrieveRNI } from '../../hooks/retrieveRNI';
+import { retrieveMeals } from '../../hooks/retrieveMeals';
+import { updateNutrientBars } from '../../hooks/updateNutrientBars';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 export default DailyOverview = ({navigation}) => {
+  const insets = useSafeAreaInsets(); // safearea view
+  // nutrient bar states
+  const [calorie, setCalorie] = useState('lacking1');
+  const [sodium, setSodium] = useState('lacking1');
+  const [protein, setProtein] = useState('lacking1');
+  const [fibre, setFibre] = useState('lacking1');
+  const [fat, setFat] = useState('lacking1');
+  const [carbohydrate, setCarbohydrate] = useState('lacking1');
+  const [sugar, setSugar] = useState('lacking1');
+  const [cholesterol, setCholesterol] = useState('lacking1');
 
-  const [calorie, setCalorie] = useState('lacking4');
-  const [sodium, setSodium] = useState('excessive6');
-  const [protein, setProtein] = useState('sufficient4');
-  const [fibre, setFibre] = useState('excessive12');
-  const [fat, setFat] = useState('lacking4');
-  const [carbohydrate, setCarbohydrate] = useState('sufficient5');
-  const [sugar, setSugar] = useState('lacking5');
-  const [cholesterol, setCholesterol] = useState('excessive5');
-  const [loading, setLoading] = useState(false);
-
-  const testing = new Date();
-  const dateTextWord = `${testing.getDate()}/${testing.getMonth()+1}/${testing.getFullYear()}`;
+  const date = new Date();
+  const todayDateString = `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
   const [refreshing, setRefreshing] = useState(false);
 
+  // Pull to refresh and updates the nutrient bars for DailyOverview
   useEffect(() => {
     if (refreshing) {
-      // do your heavy or asynchronous data fetching & update your state
-      retrieveRNI().then(
-        (data) => {
-          const RNI = data;
-          console.log(RNI);
-        });
-      // set the refreshing back to false
-      setRefreshing(false);
+      const fetchData = async () =>  {
+        const [retrievedRNI, retrievedMeal] = await Promise.all([retrieveRNI(), retrieveMeals(date)]);
+
+        let calories = 0;
+        let sodium = 0;
+        let protein = 0;
+        let fiber = 0;
+        let fat = 0;
+        let carbohydrate = 0;
+        let sugar = 0;
+        let cholesterol = 0;
+        retrievedMeal.forEach((meal) => {
+          calories += meal?.nutrients.calories;
+          sodium += meal?.nutrients.sodium_mg;
+          protein += meal?.nutrients.protein_g;
+          fiber += meal?.nutrients.fiber_g;
+          fat += meal?.nutrients.fat_total_g;
+          carbohydrate += meal?.nutrients.carbohydrates_total_g;
+          sugar += meal?.nutrients.sugar_g;
+          cholesterol += meal?.nutrients.cholesterol_mg
+          });
+        setCalorie(updateNutrientBars(retrievedRNI, 'calories',calories));
+        setSodium(updateNutrientBars(retrievedRNI, 'sodium', sodium/100));
+        setProtein(updateNutrientBars(retrievedRNI, 'protein', protein));
+        setFibre(updateNutrientBars(retrievedRNI, 'fibre', fibre));
+        setFat(updateNutrientBars(retrievedRNI, 'fat',fat));
+        setCarbohydrate(updateNutrientBars(retrievedRNI, 'carbohydrate',carbohydrate));
+        setSugar(updateNutrientBars(retrievedRNI, 'sugar', sugar));
+        setCholesterol(updateNutrientBars(retrievedRNI, 'cholesterol', cholesterol /100));
+        // set the refreshing back to false
+        setRefreshing(false);
+      };
+      fetchData();
     }
   }, [refreshing]);
 
   const DATA = [
     {
       id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      title: 'First Item',
     },
   ];
 
-  const Item = ({title}) => (
-    <View style={styles.container}>
-      <View name="Top Icon" style={styles.top}>
-        <ImageBackground source={require("../../assets/images/datebg.png")} style={styles.dateBar}>
-          <Text className="datetext" style={styles.dateText}>
-            {dateTextWord}
-          </Text>
-        </ImageBackground>
-        <Pressable onPress={() => { navigation.navigate('Calendar') }}>
-          <Image style={styles.calendar} source={require("../../assets/images/calendar.png")} />
-        </Pressable>
-      </View>
+  const renderDailyOverview = useCallback(() => {
+    return (
+    <View style={{
+      flex: 1,
+      backgroundColor: colors.backgroundColor,
+      alignItems:'center',
+      paddingTop: insets.top,
+      paddingBottom: insets.bottom,
+      paddingLeft: insets.left,
+      paddingRight: insets.right
+      }}>
+        <View name="Top Icon" style={styles.top}>
+          <ImageBackground source={require("../../assets/images/datebg.png")} style={styles.dateBar}>
+            <Text className="datetext" style={styles.dateText}>
+              {todayDateString}
+            </Text>
+          </ImageBackground>
+          <Pressable onPress={() => { navigation.navigate('Calendar') }}>
+            <Image style={styles.calendar} source={require("../../assets/images/calendar.png")} />
+          </Pressable>
+        </View>
     
       <ImageBackground name="Middle Icon" style={styles.middle} source={require("../../assets/images/dailyoverviewbg.png")}>
         <Text style={styles.dailyOverviewText}>Daily Overview</Text>
     
         <View name="Nutrient Bars" style={styles.nutrients}>
-          <View name="Row1" style={styles.nutrientRow}>
-            <NutrientBar name='Calorie' tier={calorie} />
-            <NutrientBar name='Sodium' tier={sodium} />
+          <View name = "Row1" style= {styles.nutrientRow}>
+            <NutrientBar name='Calorie' tier={calorie}/>
+            <NutrientBar name='Sodium' tier={sodium}/>
           </View>
-          <View name="Row2" style={styles.nutrientRow}>
-            <NutrientBar name='Protein' tier={protein} />
-            <NutrientBar name='Fibre' tier={fibre} />
+          <View name = "Row2" style= {styles.nutrientRow}>
+            <NutrientBar name='Protein' tier={protein}/>
+            <NutrientBar name='Fibre' tier={fibre}/>
           </View>
-          <View name="Row3" style={styles.nutrientRow}>
-            <NutrientBar name='Fat' tier={fat} />
-            <NutrientBar name='Carbohydrate' tier={carbohydrate} />
+          <View name = "Row3" style= {styles.nutrientRow}>
+            <NutrientBar name='Fat' tier={fat}/>
+            <NutrientBar name='carbohydrate' tier={carbohydrate}/>
           </View>
-          <View name="Row4" style={styles.nutrientRow}>
-            <NutrientBar name='Sugar' tier={sugar} />
-            <NutrientBar name='Cholesterol' tier={cholesterol} />
+          <View name = "Row4" style= {styles.nutrientRow}>
+            <NutrientBar name='Sugar' tier={sugar}/>
+            <NutrientBar name='Cholesterol' tier={cholesterol}/>
           </View>
         </View>
       </ImageBackground>
@@ -84,7 +119,7 @@ export default DailyOverview = ({navigation}) => {
         <Image style={styles.creature} source={require("../../assets/images/creature.png")} />
         </Pressable>
         <ImageBackground style={styles.textbox} source={require("../../assets/images/advicebg.png")}>
-          <Text style={styles.text}>
+          <Text style={styles.adviceText}>
             High on Fats{'\n'}
             Cut down on fried foods{'\n'}
             High on Calories{'\n'}
@@ -92,19 +127,14 @@ export default DailyOverview = ({navigation}) => {
           </Text>
         </ImageBackground>
       </View>
-    
     </View>
-  );
+    )});
 
-  if (loading) {
-    return <LoadingAnimation/>
-  }
 
   return (
     <FlatList
     data={DATA}
-    renderItem={({item}) => <Item title={item.title} />}
-    keyExtractor={item => item.id}
+    renderItem={renderDailyOverview}
     refreshing={refreshing}
     onRefresh={() => setRefreshing(true)}
     style={{backgroundColor:colors.backgroundColor}}
@@ -114,17 +144,10 @@ export default DailyOverview = ({navigation}) => {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.backgroundColor,
-    alignItems:'center',
-  },
-
   top:{
     flexDirection:'row',
     justifyContent:'space-between',
-    alignItems:'center',
-    marginTop:50,    
+    alignItems:'center',    
   },
 
   dateBar:{
@@ -150,13 +173,7 @@ const styles = StyleSheet.create({
     width:370,
     alignItems:'center',
   },
-    foodphoto:{
-    height:200,
-    width:300,
-    marginTop:150,
-    borderRadius:75,
-  },
-
+  
   dailyOverviewText: {
     fontFamily: 'MinimalPixel',
     fontSize:37,
@@ -193,7 +210,7 @@ const styles = StyleSheet.create({
     justifyContent:'flex-start',
     alignItems:'center',
   },
-  text:{
+  adviceText:{
     marginTop:'10%',
     fontFamily:'PixeloidSan',
     fontSize:12,
@@ -201,14 +218,5 @@ const styles = StyleSheet.create({
     width:'75%',
     height:'70%',
   },
-
-  individual:{
-    marginTop:20,
-    height:370,
-    width:370,
-    alignItems:'center',
-    marginBottom:100,
-  },
-  
 
 })
