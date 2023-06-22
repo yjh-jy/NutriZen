@@ -8,26 +8,11 @@ import { TextInput } from 'react-native-gesture-handler';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import axios from 'axios';
 import {API_KEY_CALORIE_NINJA} from '@env';
-
-const combineNutrients = async (mealNutrients) => {
-  await mealNutrients.length === 1 ? null : hasMutipleItems = true; //changing control flow
-      if (hasMutipleItems) {
-        const combinedNutrients = mealNutrients.reduce((accumulator, item) => {
-          for (const key in item) {
-            if (typeof item[key] === 'number') {
-              accumulator[key] = (accumulator[key] || 0) + item[key];
-            } else if (typeof item[key] === 'string') {
-              accumulator[key] = (accumulator[key] || ' ') + item[key];
-            }
-          }
-          return accumulator;
-        }, {});
-        mealNutrients.splice(0, mealNutrients.length, combinedNutrients);
-      } else {
-        mealNutrients = mealNutrients[0]
-      };
-}
-
+import {addDoc, collection, serverTimestamp, doc } from "firebase/firestore";
+import {auth, db} from '../../firebase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as FileSystem from 'expo-file-system';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function AddMealEntry({navigation, route}) {
   const [prediction, setPrediction] = useState(route.params.predictionParam);
@@ -35,10 +20,13 @@ export default function AddMealEntry({navigation, route}) {
   const [portionWeight, setPortionWeight] = useState(null);
   const [quantity, setQuantity] = useState('1');
   const [isLoading, setIsLoading] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const image = route.params.imageParam;
+  const imageFileNameArray = image.uri.split('/');
+  const imageFileName = imageFileNameArray[imageFileNameArray.length -1] // to be used later when creating a permanent copy on the device local storage
 
-
+  //data arrays for the dropdowns
   const portionSizeData = [
     { label: 'one-quarter', value: 0.25 },
     { label: 'half', value: 0.50 },
@@ -48,19 +36,54 @@ export default function AddMealEntry({navigation, route}) {
   const predictionsData = [];
   let i;
   for (i in class_names) {
-    predictionsData.push({label : class_names[i], value : class_names[i]});
-  };
+    predictionsData.push(
+      {
+        label : class_names[i], 
+        value : class_names[i]
+      }
+      );
+    };
+
+  const combineNutrients = async (mealNutrients) => {
+    let hasMutipleItems = false;
+    await mealNutrients.length === 1 ? null : hasMutipleItems = true; //changing control flow
+        if (hasMutipleItems) {
+          const combinedNutrients = mealNutrients.reduce((accumulator, item) => {
+            for (const key in item) {
+              if (typeof item[key] === 'number') {
+                accumulator[key] = (accumulator[key] || 0) + item[key];
+              } else if (typeof item[key] === 'string') {
+                accumulator[key] = (accumulator[key] || ' ') + item[key];
+              }
+            }
+            return accumulator;
+          }, {});
+          mealNutrients.splice(0, mealNutrients.length, combinedNutrients);
+        } else {
+          mealNutrients = mealNutrients[0]
+        };
+  }
+
 
   const handleAddMeal = async () => {
     try {
       setIsLoading(true);
-      let hasMutipleItems = false;
+      // making a permanent copy of the the image 
+      await FileSystem.copyAsync(
+        {
+          from:image.uri,
+          to: FileSystem.documentDirectory + imageFileName
+        }
+        );
+
+      // formulating the query 
       const query = portionSize === 1
         ? portionWeight // if portionWeight is specified, 
           ? `${portionWeight}g ${prediction}` // query with the portionWeight 
           : `${quantity} ${prediction}` // else, query with the quantity, default is 1.
         : `1 ${prediction}`; // The API doesn't understand decimals, so we will query the full portionSize first then calculate later
 
+      // retrieving the query from the API using GET HTTP
       const response = await axios.get('https://api.calorieninjas.com/v1/nutrition?query=', {
         params: {
           query: query
@@ -70,11 +93,10 @@ export default function AddMealEntry({navigation, route}) {
         },
       });
 
-      let mealNutrients = response.data.items; // saving the nutrietns
-      console.log(mealNutrients);
-      combineNutrients(mealNutrients);
+      let mealNutrients = response.data.items; // saving the nutrients into a variable
+      combineNutrients(mealNutrients); //combining nutrients if there's multiple nutrients returned
     
-      // applying the portionSize to each nutrient
+      // applying the portionSize to each nutrient correctly
       for (let nutrient of Object.keys(mealNutrients)) {
         if(typeof mealNutrients[nutrient] == "number" ) {
           mealNutrients[nutrient]*= Number(portionSize); // calculate portionSize
@@ -83,11 +105,24 @@ export default function AddMealEntry({navigation, route}) {
           }
         }
       };
-      console.log(mealNutrients);
+
+      // adding the meal information to firestore
+      const user = auth.currentUser;
+      id = await AsyncStorage.getItem(user.uid);       
+      const userRef = doc(db, "users", id);
+      const mealRef = collection(userRef, "meals");
+      await addDoc(mealRef, {
+        name: prediction,
+        imageuri:  FileSystem.documentDirectory + imageFileName,
+        nutrients: mealNutrients[0],
+        time: serverTimestamp()
+      });
+
       setIsLoading(false);
-      navigation.navigate('IndividualMeals', {mealnutrientsParam: mealNutrients, imageuriParam: image.uri, predictionParam: prediction});
+      navigation.navigate('IndividualMeals');
+
     } catch (error) {
-      alert(error);
+      console.log(error);
     }
   }
 
@@ -96,9 +131,16 @@ export default function AddMealEntry({navigation, route}) {
   }
   
   return (
-    <View style={styles.container}>
+    <View style={{
+      flex:1 , 
+      justifyContent:'center',
+      alignItems:'center',
+      backgroundColor:colors.backgroundColor,
+      paddingBottom: insets.bottom
+      }}
+      >
       <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "position" : "height" }>
-      <Image source={{uri:image.uri}} height={200} width ={400} resizeMode='contain'/>
+      <Image source={{uri:image.uri}} style={{height:230, width:230, alignSelf:'center',borderRadius:39}} resizeMode='contain'/>
       
       <Text style= {{fontFamily:'PixeloidsSanBold', fontSize:15, alignSelf:'center', margin:10}}>
         {'<<< Meal Information >>>'}
@@ -163,12 +205,6 @@ export default function AddMealEntry({navigation, route}) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex:1 , 
-    justifyContent:'center',
-    alignItems:'center',
-    backgroundColor:colors.backgroundColor,
-  },
   input: {
     height:49,
     width:300,

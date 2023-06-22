@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput, } from 'react-native';
+import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView } from 'react-native';
 import {useState} from 'react';
 import colors from '../../assets/colors/colors';
 import DropdownComponent from '../../components/DropDown';
@@ -10,10 +10,6 @@ export default Onboarding2 = ({route, navigation}) => {
   const genderData = [
     { label: 'male', value: 'male' },
     { label: 'female', value: 'female' },
-    { label: 'trans-male', value: 'male' },
-    { label: 'trans-female', value: 'female' },
-    { label: 'lesbian', value: 'female' },
-    { label: 'gay', value: 'male' },
   ];
 
   return (

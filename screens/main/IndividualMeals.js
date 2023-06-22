@@ -1,118 +1,216 @@
-import { StyleSheet, Text, View, Pressable, Image, ImageBackground } from 'react-native'
-import {useState, useEffect} from 'react'
+import { StyleSheet, Text, View, Pressable, Image, ImageBackground, Alert, FlatList , Modal} from 'react-native'
+import {useState, useEffect, useCallback} from 'react'
 import colors from '../../assets/colors/colors'
-import LoadingAnimation from '../../components/LoadingAnimation';
 import NutrientBar from '../../components/NutrientBar';
 import { retrieveRNI } from '../../hooks/retrieveRNI';
+import { retrieveMeals } from '../../hooks/retrieveMeals';
+import { updateNutrientBars } from '../../hooks/updateNutrientBars';
+import { useIsFocused } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Filesystem from 'expo-file-system';
+import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
+import { auth, db } from '../../firebase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default IndividualMeals = ({navigation, route}) => {
+export default IndividualMeals = ({navigation}) => {
+  const insets = useSafeAreaInsets(); // safearea view
+  const [mealsData, setMealsData] = useState(null); //flatlist data
+  const [expandImage, setExpandImage] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const isFocused = useIsFocused(); // hook that returns a boolean when screen focus changes
 
-  const [calorie, setCalorie] = useState('lacking1');
-  const [sodium, setSodium] = useState('excessive6');
-  const [protein, setProtein] = useState('sufficient4');
-  const [fibre, setFibre] = useState('excessive12');
-  const [fat, setFat] = useState('lacking4');
-  const [carbohydrate, setCarbohydrate] = useState('sufficient5');
-  const [sugar, setSugar] = useState('lacking5');
-  const [cholesterol, setCholesterol] = useState('excessive5');
-  const [loading, setLoading] = useState(false);
-
-  const mealNutrients = route?.params?.mealnutrientsParam;
-  const imageUri = route?.params?.imageuriParam;
-  const prediction = route?.params?.predictionParam;
-
-  const updateNutrientBars = (RNI) => {
-    (mealNutrients.calorie / RNI.calorie)
-  };
-
-  function rawToState() {
+  const date = new Date(); // to be passed as a prop from calendar in the future
+  const todayDateString = `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
   
-  }
-
   useEffect(() => {
-    retrieveRNI()
-    .then(
-      (data) => { 
-        const RNI = data;
-        console.log(RNI);
-        // updateNutrientBars(RNI);
-      }
-      );
-    }, []);
-
-
-  const testing = new Date();
-  const dateTextWord = `${testing.getDate()}/${testing.getMonth()+1}/${testing.getFullYear()}`; 
-
-
-  if (loading) {
-    return <LoadingAnimation/>
+    if (refreshing || isFocused) { // only queries the backend when necessary
+    const fetchData = async () => {
+      let [retrievedRNI, retrievedMeal] = await Promise.all([retrieveRNI(), retrieveMeals(date)]);
+      const mealsDataContainer = [];
+      retrievedMeal.forEach((meal) => {
+          const calories = updateNutrientBars(retrievedRNI, 'calories', meal?.nutrients.calories);
+          const sodium = updateNutrientBars(retrievedRNI, 'sodium', meal?.nutrients.sodium_mg /100);
+          const protein = updateNutrientBars(retrievedRNI, 'protein', meal?.nutrients.protein_g);
+          const fibre = updateNutrientBars(retrievedRNI, 'fibre', meal?.nutrients.fiber_g);
+          const fat = updateNutrientBars(retrievedRNI, 'fat', meal?.nutrients.fat_total_g);
+          const carbohydrate = updateNutrientBars(retrievedRNI, 'carbohydrate', meal?.nutrients.carbohydrates_total_g);
+          const sugar = updateNutrientBars(retrievedRNI, 'sugar', meal?.nutrients.sugar_g);
+          const cholesterol = updateNutrientBars(retrievedRNI, 'cholesterol', meal?.nutrients.cholesterol_mg /100);
+          const imageUri = meal?.imageuri;
+          const prediction = meal?.name;
+          mealsDataContainer.push(
+            {
+              calories: calories,
+              sodium: sodium,
+              protein: protein,
+              fibre: fibre,
+              fat: fat,
+              carbohydrate: carbohydrate,
+              sugar: sugar,
+              cholesterol: cholesterol,
+              prediction: prediction,
+              mealNutrients: meal.nutrients,
+              imageuri: imageUri
+            }
+          );
+        });
+      mealsDataContainer.reverse()
+      setMealsData(mealsDataContainer);
+    };
+    fetchData();
   }
+  
+  }, [refreshing, isFocused]); // dependecies array ensures that useEffet triggers whenever there is a change in BOTH state variables
 
-  return (
-
-    <View style={styles.container}>
-        <View name = "Top Icon" style = {styles.top}>
-          
-        <ImageBackground
-        source = {require("../../assets/images/datebg.png")} style = {styles.dateBar}>
-          <Text className="datetext" style = {styles.dateText}>{dateTextWord}</Text>     
-        </ImageBackground>  
-        <Pressable  onPress={()=>{navigation.navigate('Calendar')}}>
-          <Image style={styles.calendar} source = {require("../../assets/images/calendar.png")}></Image>
-        </Pressable>
-
-      </View> 
-
-      <View style={styles.middle}>
-        <Pressable onPress={()=>{}}>
-          <Image style={styles.foodphoto} source ={{uri: imageUri}} resizeMode='cover'/>
-        </Pressable>
-
-        <ImageBackground name = "Individual Icon" style = {styles.individual} source={require("../../assets/images/individualmealsbg.png")}>
-          
-          <Text style = {styles.individualMealsText}>Individual Meals</Text>
-
-          <Text style = {styles.mealName}>{prediction}</Text>
-
-          <View name= "Nutrient Bars" style={styles.nutrients}>
-            <View name = "Row1" style= {styles.nutrientRow}>
-                <NutrientBar name='Calorie' tier={calorie}/>
-                <NutrientBar name='Sodium' tier={sodium}/>
-            </View>
-            <View name = "Row2" style= {styles.nutrientRow}>
-                <NutrientBar name='Protein' tier={protein}/>
-                <NutrientBar name='Fibre' tier={fibre}/>
-            </View>
-            <View name = "Row3" style= {styles.nutrientRow}>
-                <NutrientBar name='Fat' tier={fat}/>
-                <NutrientBar name='Carbohydrate'tier={carbohydrate}/>
-            </View>
-            <View name = "Row4" style= {styles.nutrientRow}>
-                <NutrientBar name='Sugar' tier={sugar}/>
-                <NutrientBar name='Cholesterol'tier={cholesterol}/>
-            </View>
-          </View>
-
+  // shows a haiku when there is no meals logged to motivate user
+  const handleEmptyList = () => {
+    return(
+      <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
+        <ImageBackground name="Individual Icon" style={styles.individualMealsScroll} source={require("../../assets/images/individualmealsbg.png")}>
+          <Text style={{fontFamily:'MinimalPixel', fontSize:30, textAlign:'center', marginTop:110}}>
+            {'Capture each meal,\n\n\n\nForge your path to victory,\n\n\n\n Nutrition conquers.'}
+          </Text>
         </ImageBackground>
       </View>
+    )
+  };
+
+  const renderIndividualMeal = useCallback(({item}) => {
+
+    const calories = (item.calories);
+    const sodium = (item.sodium);
+    const protein = (item.protein);
+    const fibre = (item.fibre);
+    const fat = (item.fat);
+    const carbohydrate = (item.carbohydrate);
+    const sugar = (item.sugar);
+    const cholesterol = (item.cholesterol);
+    const mealNutrients = (item.mealNutrients);
+    const imageUri = (item.imageuri);
+    const prediction = (item.prediction);
+
+    const handleDeleteMeal = () =>
+      Alert.alert('Delete Meal ?', 'This action is IRREVERSIBLE', [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {text: 'Delete', onPress: () => {
+          (async () => {
+          const user = auth.currentUser;
+          const id = await AsyncStorage.getItem(user.uid);
+          const mealsRef = collection(db, "users", id, "meals");
+          const mealsQuery = query(mealsRef, where('imageuri', '==', imageUri));
+          const querySnapshot = await getDocs(mealsQuery);
+          querySnapshot.forEach(async (docu) => {
+            await deleteDoc(doc(db, "users", id, "meals", docu.id));
+            await Filesystem.deleteAsync(imageUri);
+          })
+          setRefreshing(!refreshing);
+          })();
+        }
+      },
+      ]);
+    // returns a modal view of the full-size image when the image is pressed
+    if (expandImage) {
+      return (
+        <Modal 
+        animationType = 'fade'
+        style={{justifyContent:'center', alignItems:'center', flex:1}}
+        transparent={true}
+        >
+          <Pressable onPress={()=>{setExpandImage(false)}}>
+            <Image
+            source={{uri: imageUri}}
+            style={{height: 440, width:440, marginVertical:'50%', alignSelf:'center'}}
+            />
+          </Pressable>
+            
+        </Modal>
+      )
+    }
+      
+    return (
+      <View style={styles.middleIconsWrapper}>
+        <Pressable onPress={()=>{setExpandImage(true)}}>
+          <Image style={styles.foodPhoto} source={{ uri: imageUri }} resizeMode="cover" />
+        </Pressable>
+
+        <Pressable onPress={handleDeleteMeal}>
+            <Image
+            source={require('../../assets/images/deletemealbutton.png')}
+            style={styles.deleteButton} 
+            />
+          </Pressable>
+
+        <ImageBackground name="Individual Icon" style={styles.individualMealsScroll} source={require("../../assets/images/individualmealsbg.png")}>
+          
+          <Text style={styles.individualMealsText}>Individual Meals</Text>
+
+          <Text style={styles.mealName}>{prediction}</Text>
+
+          <View name="Nutrient Bars" style={styles.nutrients}>
+            <View name="Row1" style={styles.nutrientRow}>
+              <NutrientBar name={`calories: ${mealNutrients?.calories.toFixed(1)}`} tier={calories} />
+              <NutrientBar name={`sodium: ${(mealNutrients?.sodium_mg / 100).toFixed(1)}g`} tier={sodium} />
+            </View>
+            <View name="Row2" style={styles.nutrientRow}>
+              <NutrientBar name={`protein: ${mealNutrients?.protein_g.toFixed(1)}g`} tier={protein} />
+              <NutrientBar name={`fibre: ${mealNutrients?.fiber_g.toFixed(1)}g`} tier={fibre} />
+            </View>
+            <View name="Row3" style={styles.nutrientRow}>
+              <NutrientBar name={`fat: ${mealNutrients?.fat_total_g.toFixed(1)}g`} tier={fat} />
+              <NutrientBar name={`carbohydrate: ${mealNutrients?.carbohydrates_total_g.toFixed(1)}g`} tier={carbohydrate} />
+            </View>
+            <View name="Row4" style={styles.nutrientRow}>
+              <NutrientBar name={`sugar: ${mealNutrients?.sugar_g.toFixed(1)}g`} tier={sugar} />
+              <NutrientBar name={`cholesterol: ${mealNutrients?.cholesterol_mg.toFixed(1)}mg`} tier={cholesterol} />
+            </View>
+          </View>
+        </ImageBackground>
+      </View>
+
+    )
+  });
+  
+
+  return (
+    <View style={{
+      flex: 1,
+      backgroundColor: colors.backgroundColor,
+      alignItems:'center',
+      paddingTop: insets.top,
+      }}>
+        <View name = "Top Icons" style = {styles.topIconsWrapper}>
+          <ImageBackground
+          source = {require("../../assets/images/datebg.png")} style = {styles.dateBar}>
+            <Text className="datetext" style = {styles.dateText}>{todayDateString}</Text>     
+          </ImageBackground>
+          
+          <Pressable  onPress={()=>{navigation.navigate('Calendar')}}>
+            <Image style={styles.calendar} source = {require("../../assets/images/calendar.png")}></Image>
+          </Pressable>
+        </View>
+        
+        <FlatList
+        data={mealsData}
+        horizontal={true}
+        renderItem={renderIndividualMeal}
+        ListEmptyComponent={handleEmptyList}
+        maxToRenderPerBatch={1}
+        />
       
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.backgroundColor,
-    alignItems:'center',
-  },
 
-  top:{
+  topIconsWrapper:{
     flexDirection:'row',
     justifyContent:'space-between',
-    alignItems:'center',
-    marginTop:50,    
+    alignItems:'center',  
   },
 
   dateBar:{
@@ -131,21 +229,27 @@ const styles = StyleSheet.create({
     height:70,
     width:70,
   },
-
-  middle:{
+  deleteButton: {
     marginTop:10,
-    height:370,
-    width:370,
-    alignItems:'center',
+    height:30,
+    width:30,
+    marginLeft:300,
+    
   },
 
-  foodphoto:{
+  middleIconsWrapper:{
+    marginTop:10,
+    marginLeft: 23,
+    marginRight: 23,
+  },
+
+  foodPhoto:{
     height:150,
     width:350,
     borderRadius:55,
   },
-  individual:{
-    marginTop:30,
+  individualMealsScroll:{
+    marginTop:-11,
     height:450,
     width:360,
     alignItems:'center',
@@ -174,34 +278,8 @@ const styles = StyleSheet.create({
   },
   nutrientRow:{
     justifyContent:'space-evenly',
-    flexDirection:'row'
-  },
-
-  bottom: {
-    alignItems: 'center',
-    justifyContent:'space-between',
-    paddingHorizontal:15,
-    marginTop:20,
-  },
-  creature:{
-    height:60,
-    width:120,
-  },
-
-  textbox: {
-    height:175,
-    width:340,
-    marginTop:-20,
-    justifyContent:'flex-start',
-    alignItems:'center',
-  },
-  text:{
-    marginTop:'10%',
-    fontFamily:'PixeloidSan',
-    fontSize:12,
-    textAlign:'center',
-    width:'75%',
-    height:'70%',
-  },
+    flexDirection:'row',
+    marginTop:4
+  }
 
 })

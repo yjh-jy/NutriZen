@@ -10,6 +10,7 @@ import Profile from '../screens/main/Profile';
 import Calendar from '../screens/main/Calendar';
 import IndividualMeals from '../screens/main/IndividualMeals';
 import AddMealEntry from '../screens/main/AddMealEntry';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -24,10 +25,7 @@ function DailyOverviewStackScreen() {
     <DailyOverviewStack.Navigator>
       <Stack.Screen name="DailyOverview" component={DailyOverview} options = {{headerShown: false, gestureEnabled:false}}/>
       <Stack.Screen name="IndividualMeals" component={IndividualMeals} 
-      options = {{headerShown: false, gestureEnabled:false, 
-        cardStyleInterpolator: Platform.OS === 'ios' 
-        ? CardStyleInterpolators.forVerticalIOS 
-        : CardStyleInterpolators.forFadeFromBottomAndroid}}/>
+      options = {{headerShown: false, gestureEnabled:false, cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid}}/>
     </DailyOverviewStack.Navigator>
   )
 }
@@ -72,13 +70,15 @@ const RootStack = createStackNavigator();
 
 export default function UserTab() {
     return (
+      <SafeAreaProvider>
         <NavigationContainer>
           <RootStack.Navigator>
             <Stack.Screen name="MainTabs" component={MainTabs}  options = {{headerShown: false}}/>
             <Stack.Screen name="AddMeal" component={AddMeal} options = {{headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS, gestureEnabled:false}} />
-            <Stack.Screen name="AddMealEntry" component={AddMealEntry} options = {{headerShown: false}} />
+            <Stack.Screen name="AddMealEntry" component={AddMealEntry} options = {{headerShown: false, gestureEnabled:false}} />
             <Stack.Screen name="Calendar" component={Calendar} options = {{headerShown: false}} />
           </RootStack.Navigator>
         </NavigationContainer>
+      </SafeAreaProvider>
     );
   }

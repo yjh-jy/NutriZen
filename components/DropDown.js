@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { StyleSheet, } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import colors from '../assets/colors/colors';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
@@ -22,6 +22,7 @@ const DropdownComponent = ({data, dropdownlabel, icon, setValue, value}) => {
       placeholder={dropdownlabel}
       searchPlaceholder="Search..."
       value={value}
+      autoScroll={false}
       onChange={item => {
         setValue(item.value);
       }}

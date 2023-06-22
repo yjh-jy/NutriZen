@@ -1,11 +1,10 @@
 import { doc, getDoc} from "firebase/firestore"; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { auth } from '../firebase'
-import { db } from '../firebase';
+import { auth, db } from '../firebase'
+
 
 export async function retrieveRNI() {
     const user = auth.currentUser;
-    console.log(user.uid, 'useruid');
     const id = await AsyncStorage.getItem(user.uid);
     const docRef = doc(db, "users", id);
     const docSnap = await getDoc(docRef);
@@ -18,10 +17,10 @@ export async function retrieveRNI() {
         const protein = userInformation.weight * 0.75;
         const fat = (calories*0.25)/9;
         const fibre = userInformation.gender === 'male' ? 30 : 21;
-        const sugar = (calories * 0.10)/5;
-        const cholesterol = 250;
-        const sodium = 2.3;
-        const RNI = {calories:calories, protein:protein, fat:fat, fibre:fibre, sugar:sugar, cholesterol:cholesterol, sodium:sodium}
+        const sugar = (calories * 0.10);
+        const cholesterol = 0.3;
+        const sodium = 5;
+        const RNI = {calories:calories, carbohydrate:carbohydrate, protein:protein, fat:fat, fibre:fibre, sugar:sugar, cholesterol:cholesterol, sodium:sodium}
         return RNI;
     
     } else {
