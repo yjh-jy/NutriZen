@@ -25,7 +25,7 @@ function DailyOverviewStackScreen() {
     <DailyOverviewStack.Navigator>
       <Stack.Screen name="DailyOverview" component={DailyOverview} options = {{headerShown: false, gestureEnabled:false}}/>
       <Stack.Screen name="IndividualMeals" component={IndividualMeals} 
-      options = {{headerShown: false, gestureEnabled:false, cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid}}/>
+      options = {{headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid}}/>
     </DailyOverviewStack.Navigator>
   )
 }
@@ -75,8 +75,8 @@ export default function UserTab() {
           <RootStack.Navigator>
             <Stack.Screen name="MainTabs" component={MainTabs}  options = {{headerShown: false}}/>
             <Stack.Screen name="AddMeal" component={AddMeal} options = {{headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS, gestureEnabled:false}} />
-            <Stack.Screen name="AddMealEntry" component={AddMealEntry} options = {{headerShown: false, gestureEnabled:false}} />
-            <Stack.Screen name="Calendar" component={Calendar} options = {{headerShown: false}} />
+            <Stack.Screen name="AddMealEntry" component={AddMealEntry} options = {{headerShown: false}} />
+            <Stack.Screen name="Calendar" component={Calendar} options = {{headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS, gestureDirection:'vertical'}} />
           </RootStack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>
