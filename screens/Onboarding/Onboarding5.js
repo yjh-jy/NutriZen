@@ -1,10 +1,9 @@
-import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput, } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import {useState} from 'react';
 import colors from '../../assets/colors/colors';
 import LoadingAnimation from '../../components/LoadingAnimation';
-import { collection, doc, setDoc} from "firebase/firestore"; 
+import { doc, setDoc} from "firebase/firestore"; 
 import { db } from '../../firebase';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth } from '../../firebase';
 import DropdownComponent from '../../components/DropDown';
 
@@ -29,19 +28,16 @@ export default Onboarding5 = ({navigation, route}) => {
 
   async function handleSubmit() {
     setIsloading(true);
-    const userRef = doc(collection(db, "users"));
-    await setDoc(userRef, {
+    user = auth.currentUser;
+    await setDoc(doc(db, "users", user.uid), {
       name: name,
       gender: gender,
       age: Number(age),
       height: Number(height),
       weight: Number(weight),
       fitness_constant: fitness
-    })
-  user = auth.currentUser;
-  await AsyncStorage.setItem(user.uid, userRef.id);
-  console.log(user.uid, userRef.id);
-  setIsloading(false);
+    });
+    setIsloading(false);
   }
 
   if (isloading) {
@@ -61,17 +57,17 @@ export default Onboarding5 = ({navigation, route}) => {
               setValue={setFitness}
               />
 
-              <Pressable onPress={
+              <TouchableOpacity onPress={
                 fitness 
                 ? handleSubmit
               : ()=>{alert('Enter a fitness level')}
               }>
                 <Text style = {styles.proceed}>Submit</Text>
-                </Pressable>
+                </TouchableOpacity>
                 
-            <Pressable onPress={()=>{navigation.goBack()}}>
+            <TouchableOpacity onPress={()=>{navigation.goBack()}}>
                 <Text style = {styles.back} >Back</Text>
-                </Pressable>
+                </TouchableOpacity>
               
               
 

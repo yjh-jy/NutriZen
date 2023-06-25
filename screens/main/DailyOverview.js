@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, Image, ImageBackground, FlatList, SafeAreaView } from 'react-native'
+import { StyleSheet, Text, View, Pressable, Image, ImageBackground, FlatList, SafeAreaView, TouchableHighlight, TouchableOpacity } from 'react-native'
 import {useCallback, useEffect, useState} from 'react'
 import colors from '../../assets/colors/colors'
 import NutrientBar from '../../components/NutrientBar';
@@ -49,13 +49,13 @@ export default DailyOverview = ({navigation}) => {
           cholesterol += meal?.nutrients.cholesterol_mg
           });
         setCalorie(updateNutrientBars(retrievedRNI, 'calories',calories));
-        setSodium(updateNutrientBars(retrievedRNI, 'sodium', sodium/100));
+        setSodium(updateNutrientBars(retrievedRNI, 'sodium', sodium/1000));
         setProtein(updateNutrientBars(retrievedRNI, 'protein', protein));
         setFibre(updateNutrientBars(retrievedRNI, 'fibre', fibre));
         setFat(updateNutrientBars(retrievedRNI, 'fat',fat));
         setCarbohydrate(updateNutrientBars(retrievedRNI, 'carbohydrate',carbohydrate));
         setSugar(updateNutrientBars(retrievedRNI, 'sugar', sugar));
-        setCholesterol(updateNutrientBars(retrievedRNI, 'cholesterol', cholesterol /100));
+        setCholesterol(updateNutrientBars(retrievedRNI, 'cholesterol', cholesterol /1000));
         // set the refreshing back to false
         setRefreshing(false);
       };
@@ -86,9 +86,9 @@ export default DailyOverview = ({navigation}) => {
               {todayDateString}
             </Text>
           </ImageBackground>
-          <Pressable onPress={() => { navigation.navigate('Calendar') }}>
+          <TouchableOpacity onPress={() => { navigation.navigate('Calendar') }}>
             <Image style={styles.calendar} source={require("../../assets/images/calendar.png")} />
-          </Pressable>
+          </TouchableOpacity>
         </View>
     
       <ImageBackground name="Middle Icon" style={styles.middle} source={require("../../assets/images/dailyoverviewbg.png")}>
@@ -115,15 +115,15 @@ export default DailyOverview = ({navigation}) => {
       </ImageBackground>
     
       <View name="Bottom Icon" style={styles.bottom}>
-        <Pressable onPress={()=>{navigation.navigate('IndividualMeals')}}>
+        <TouchableOpacity onPress={()=>{navigation.navigate('IndividualMeals')}} activeOpacity={0.6}>
         <Image style={styles.creature} source={require("../../assets/images/creature.png")} />
-        </Pressable>
+        </TouchableOpacity>
         <ImageBackground style={styles.textbox} source={require("../../assets/images/advicebg.png")}>
           <Text style={styles.adviceText}>
-            High on Fats{'\n'}
-            Cut down on fried foods{'\n'}
-            High on Calories{'\n'}
-            Cut down on starchy foods such as rice and pasta
+            High on Cholesterol{'\n'}
+            Cut down on fried food. Eat more omega-3 foods{'\n'}
+            High on Protein{'\n'}
+            Cut down on meat or beans. Eat more fruits/vegetable
           </Text>
         </ImageBackground>
       </View>

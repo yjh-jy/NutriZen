@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, TextInput } from 'react-native';
 import {useState} from 'react';
 import colors from '../../assets/colors/colors';
 
@@ -26,18 +26,18 @@ export default Onboarding3 = ({route, navigation}) => {
               <Text style = {styles.subtitle}>Age</Text>
               
 
-              <Pressable 
+              <TouchableOpacity 
               onPress={
                 (age !== '' && Number(age) >= 13)
                 ? ()=>{navigation.navigate('Onboarding4', {ageParam: age, genderParam: route.params.genderParam, nameParam: route.params.nameParam})}
                 : () => {alert('Invalid age')}
                 }>
                 <Text style = {styles.proceed}>Proceed</Text>
-                </Pressable>
+                </TouchableOpacity>
 
-              <Pressable onPress={()=>{navigation.goBack()}}>
+              <TouchableOpacity onPress={()=>{navigation.goBack()}}>
                 <Text style = {styles.back} >Back</Text>
-                </Pressable>
+                </TouchableOpacity>
               
               
 

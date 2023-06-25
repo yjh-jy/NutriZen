@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import {useState} from 'react';
 import colors from '../../assets/colors/colors';
 import DropdownComponent from '../../components/DropDown';
@@ -25,16 +25,16 @@ export default Onboarding2 = ({route, navigation}) => {
               setValue={setGender}
               />              
 
-              <Pressable 
+              <TouchableOpacity 
               onPress={gender 
               ? ()=>{navigation.navigate('Onboarding3', {genderParam: gender, nameParam: route.params.nameParam})} 
               : () => {alert('Please select your gender')}}>
                 <Text style = {styles.proceed}>Proceed</Text>
-                </Pressable>
+                </TouchableOpacity>
 
-              <Pressable onPress={()=>{navigation.goBack()}}>
+              <TouchableOpacity onPress={()=>{navigation.goBack()}}>
                 <Text style = {styles.back} >Back</Text>
-                </Pressable>
+                </TouchableOpacity>
               
             </View>
           </KeyboardAvoidingView>

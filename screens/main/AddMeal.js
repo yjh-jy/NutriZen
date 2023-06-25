@@ -10,7 +10,6 @@ import * as tf from '@tensorflow/tfjs'
 import {bundleResourceIO, decodeJpeg} from '@tensorflow/tfjs-react-native'
 import * as FileSystem from 'expo-file-system';
 import { manipulateAsync } from 'expo-image-manipulator';
-import {class_names} from '../../assets/model/class_names';
 
 
 export default AddMeal = ({navigation}) => {
@@ -31,11 +30,11 @@ export default AddMeal = ({navigation}) => {
         setIsTfReady(true);
         // Bundle the model files and load the model:
         const modelJSON = require('../../assets/model/model.json');
-        const modelWeights = require('../../assets/model/group1-shard.bin');
+        const modelWeights = require('../../assets/model/group1-shard1of1.bin');
         const loadedModel = await tf.loadGraphModel(
           bundleResourceIO(modelJSON, modelWeights)
         ).catch((e) => {
-          console.log("Error:", e);
+          alert(e);
         });
         setModel(loadedModel); // Load the model to the state
       }
@@ -104,6 +103,7 @@ export default AddMeal = ({navigation}) => {
     const predictions = await model.predict(imageTensor); // send the image to the model
     const probabilities = await predictions.data();
     const highestPredictionIdx = await probabilities.indexOf(Math.max(...probabilities));
+    const class_names = require('../../assets/model/class_names.json');
     const prediction = class_names[highestPredictionIdx];
     const probability = (probabilities[highestPredictionIdx]*100).toFixed(2);
     alert(`Likely to be ${prediction} with a ${probability}% probability.`);

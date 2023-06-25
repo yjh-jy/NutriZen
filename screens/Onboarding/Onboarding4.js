@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput, } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, TextInput, } from 'react-native';
 import {useState} from 'react';
 import colors from '../../assets/colors/colors';
 
@@ -45,7 +45,7 @@ export default Onboarding4 = ({navigation, route}) => {
               <Text style = {styles.subtitle}>Weight in KG</Text>
               
 
-              <Pressable onPress={
+              <TouchableOpacity onPress={
                 ( Number(height) >= 100 && Number(height) <= 220 && Number(weight)>=30 && Number(weight)<= 300 )
                 ? () => {
                 navigation.navigate('Onboarding5', {
@@ -58,11 +58,11 @@ export default Onboarding4 = ({navigation, route}) => {
                 : () => {alert('Invalid height/weight')}
                 }>
                 <Text style = {styles.proceed}>Proceed</Text>
-                </Pressable>
+                </TouchableOpacity>
 
-              <Pressable onPress={()=>{navigation.goBack()}}>
+              <TouchableOpacity onPress={()=>{navigation.goBack()}}>
                 <Text style = {styles.back} >Back</Text>
-                </Pressable>
+                </TouchableOpacity>
               
               
 

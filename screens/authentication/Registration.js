@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput} from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, TextInput} from 'react-native'
 import {useState} from 'react'
 import colors from '../../assets/colors/colors'
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
@@ -60,13 +60,13 @@ export default Registration = ({navigation}) => {
 
               <Text style = {styles.subtitle}>Password</Text>
               
-              <Pressable onPress={handleSignUp}>
+              <TouchableOpacity onPress={handleSignUp}>
                 <Text style = {styles.register}>Register</Text>
-                </Pressable>
+                </TouchableOpacity>
 
-              <Pressable onPress={()=>{navigation.goBack()}}>
+              <TouchableOpacity onPress={()=>{navigation.goBack()}}>
                 <Text style = {styles.back} >Back</Text>
-                </Pressable>
+                </TouchableOpacity>
 
             </View>
             </KeyboardAvoidingView>

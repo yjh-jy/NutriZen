@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, TextInput} from 'react-native';
 import {useState} from 'react'
 import colors from '../../assets/colors/colors';
 import {auth} from '../../firebase';
@@ -41,9 +41,9 @@ export default PasswordRetrival = ({navigation}) => {
               </TextInput>
 
 
-            <Pressable onPress={resetPassword}>
+            <TouchableOpacity onPress={resetPassword}>
               <Text style = {styles.reset}>Reset</Text>
-                </Pressable>
+                </TouchableOpacity>
               
             </View>
             </KeyboardAvoidingView>

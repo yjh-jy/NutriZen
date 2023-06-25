@@ -3,14 +3,12 @@ import {useState} from 'react'
 import colors from '../../assets/colors/colors'
 import LoadingAnimation from '../../components/LoadingAnimation'
 import DropdownComponent from '../../components/DropDown';
-import { class_names } from '../../assets/model/class_names';
 import { TextInput } from 'react-native-gesture-handler';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import axios from 'axios';
 import {API_KEY_CALORIE_NINJA} from '@env';
 import {addDoc, collection, serverTimestamp, doc } from "firebase/firestore";
 import {auth, db} from '../../firebase';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -34,6 +32,7 @@ export default function AddMealEntry({navigation, route}) {
     { label: 'full', value: 1 },
   ];
   const predictionsData = [];
+  const class_names = require('../../assets/model/class_names.json');
   let i;
   for (i in class_names) {
     predictionsData.push(
@@ -44,26 +43,22 @@ export default function AddMealEntry({navigation, route}) {
       );
     };
 
-  const combineNutrients = async (mealNutrients) => {
-    let hasMutipleItems = false;
-    await mealNutrients.length === 1 ? null : hasMutipleItems = true; //changing control flow
-        if (hasMutipleItems) {
-          const combinedNutrients = mealNutrients.reduce((accumulator, item) => {
-            for (const key in item) {
-              if (typeof item[key] === 'number') {
-                accumulator[key] = (accumulator[key] || 0) + item[key];
-              } else if (typeof item[key] === 'string') {
-                accumulator[key] = (accumulator[key] || ' ') + item[key];
-              }
-            }
-            return accumulator;
-          }, {});
-          mealNutrients.splice(0, mealNutrients.length, combinedNutrients);
-        } else {
-          mealNutrients = mealNutrients[0]
-        };
+  function combineMealNutrients(mealNutrients) {
+    if (mealNutrients.length !== 1) {
+    return mealNutrients.reduce((accumulator, nutrient) => {
+      for (const key in nutrient) {
+        if (typeof nutrient[key] === 'number') {
+          accumulator[key] = (accumulator[key] || 0) + nutrient[key];
+        } else if (typeof nutrient[key] === 'string') {
+          accumulator[key] = (accumulator[key] || '') + ' ' + nutrient[key];
+        }
+      }
+      return accumulator;
+    }, {});
+  } else {
+    return mealNutrients[0]
   }
-
+  };
 
   const handleAddMeal = async () => {
     try {
@@ -93,28 +88,27 @@ export default function AddMealEntry({navigation, route}) {
         },
       });
 
-      let mealNutrients = response.data.items; // saving the nutrients into a variable
-      combineNutrients(mealNutrients); //combining nutrients if there's multiple nutrients returned
-    
+      const mealNutrients = response.data.items; // saving the nutrients into a variable
+      const combinedNutrients = combineMealNutrients(mealNutrients); //combining nutrients if there's multiple nutrients returned
+
       // applying the portionSize to each nutrient correctly
-      for (let nutrient of Object.keys(mealNutrients)) {
-        if(typeof mealNutrients[nutrient] == "number" ) {
-          mealNutrients[nutrient]*= Number(portionSize); // calculate portionSize
+      for (let nutrient of Object.keys(combinedNutrients)) {
+        if(typeof combinedNutrients[nutrient] == "number" ) {
+          combinedNutrients[nutrient]*= Number(portionSize); // calculate portionSize
           if (portionWeight) {
-            mealNutrients[nutrient]*= Number(quantity); // calculate quantity based on portionWeight
+            combinedNutrients[nutrient]*= Number(quantity); // calculate quantity based on portionWeight
           }
         }
       };
 
       // adding the meal information to firestore
       const user = auth.currentUser;
-      id = await AsyncStorage.getItem(user.uid);       
-      const userRef = doc(db, "users", id);
+      const userRef = doc(db, "users", user.uid);
       const mealRef = collection(userRef, "meals");
       await addDoc(mealRef, {
         name: prediction,
         imageuri:  FileSystem.documentDirectory + imageFileName,
-        nutrients: mealNutrients[0],
+        nutrients: combinedNutrients,
         time: serverTimestamp()
       });
 

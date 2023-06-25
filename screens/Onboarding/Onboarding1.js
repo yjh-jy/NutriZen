@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput, } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, TextInput, } from 'react-native';
 import {useState, useCallback} from 'react';
 import { useFonts } from 'expo-font';
 import colors from '../../assets/colors/colors';
@@ -43,9 +43,9 @@ export default Onboarding1 = ({navigation}) => {
 
               <Text style = {styles.subtitle}>Enter your name</Text>              
 
-              <Pressable onPress={() => {navigation.navigate('Onboarding2', {nameParam: name})}}>
+              <TouchableOpacity onPress={() => {navigation.navigate('Onboarding2', {nameParam: name})}}>
                 <Text style = {styles.proceed}>Proceed</Text>
-                </Pressable>
+                </TouchableOpacity>
               
               
 
