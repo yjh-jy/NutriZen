@@ -1,33 +1,43 @@
 import { StyleSheet, Text, View, SafeAreaView, Pressable, Image } from 'react-native'
-import {useCallback} from 'react'
-import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import colors from '../../assets/colors/colors'
-import { auth } from '../../firebase';
-import { signOut } from 'firebase/auth';
+import CalendarPicker from 'react-native-calendar-picker';
+import { useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 SplashScreen.preventAutoHideAsync();
 
 export default Calendar = ({navigation}) => {
-  const handleSignOut = () => {
-    signOut(auth)
-    .catch((error) => {
-      alert(error.message)
-    });
+  const today = new Date();
+  const [date, setDate] = useState(null);
+  const insets = useSafeAreaInsets();
+  const selectedDate = date
+    ? date.format('DD-M-YYYY').toString()
+    : '';
+  const dateArray = selectedDate.split('-');
 
-  };
+  if (date) {
+    navigation.navigate('IndividualMeals', {dateParams: dateArray})
+  }
   
-
   return (
-    <View style= {styles.container}>
-      <SafeAreaView>
-      <Text>Calendar</Text>
-
-      <Pressable onPress={handleSignOut}>
-        <Text style = {styles.signOut} >Sign Out</Text>
-        </Pressable> 
-        </SafeAreaView>
-
+    <View style= {{
+      flex:1,
+      backgroundColor:colors.textFieldColor,
+      paddingTop:insets.top,
+      paddingBottom:insets.bottom,
+      paddingLeft:insets.left,
+      paddingRight:insets.right,
+      justifyContent:'center',
+      alignItems:'center'
+    }}>
+      <CalendarPicker
+      selectedDayColor={colors.textFieldColor}
+      onDateChange={setDate}
+      maxDate={today}
+      weekdays={['日','月','火','水','木','金','土']}
+      textStyle={{fontFamily:'PixeloidSan', fontSize:15}}
+      />
     </View>
   )
 }

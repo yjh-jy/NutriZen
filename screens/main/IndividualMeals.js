@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, Image, ImageBackground, Alert, FlatList , Modal} from 'react-native'
+import { StyleSheet, Text, View, Pressable, Image, ImageBackground, Alert, FlatList , Modal, TouchableOpacity} from 'react-native'
 import {useState, useEffect, useCallback} from 'react'
 import colors from '../../assets/colors/colors'
 import NutrientBar from '../../components/NutrientBar';
@@ -10,16 +10,18 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Filesystem from 'expo-file-system';
 import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
 import { auth, db } from '../../firebase';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default IndividualMeals = ({navigation}) => {
+export default IndividualMeals = ({navigation, route}) => {
   const insets = useSafeAreaInsets(); // safearea view
   const [mealsData, setMealsData] = useState(null); //flatlist data
   const [expandImage, setExpandImage] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const isFocused = useIsFocused(); // hook that returns a boolean when screen focus changes
 
-  const date = new Date(); // to be passed as a prop from calendar in the future
+  const dateArray = route?.params?.dateParams // Prop from Calendar
+  const date = dateArray // checks if user is entering from DailyOveriew or from Calendar 
+    ? new Date(+dateArray[2], +dateArray[1] -1, +dateArray[0]) 
+    : new Date();
   const todayDateString = `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
   
   useEffect(() => {
@@ -29,13 +31,13 @@ export default IndividualMeals = ({navigation}) => {
       const mealsDataContainer = [];
       retrievedMeal.forEach((meal) => {
           const calories = updateNutrientBars(retrievedRNI, 'calories', meal?.nutrients.calories);
-          const sodium = updateNutrientBars(retrievedRNI, 'sodium', meal?.nutrients.sodium_mg /100);
+          const sodium = updateNutrientBars(retrievedRNI, 'sodium', meal?.nutrients.sodium_mg /1000);
           const protein = updateNutrientBars(retrievedRNI, 'protein', meal?.nutrients.protein_g);
           const fibre = updateNutrientBars(retrievedRNI, 'fibre', meal?.nutrients.fiber_g);
           const fat = updateNutrientBars(retrievedRNI, 'fat', meal?.nutrients.fat_total_g);
           const carbohydrate = updateNutrientBars(retrievedRNI, 'carbohydrate', meal?.nutrients.carbohydrates_total_g);
           const sugar = updateNutrientBars(retrievedRNI, 'sugar', meal?.nutrients.sugar_g);
-          const cholesterol = updateNutrientBars(retrievedRNI, 'cholesterol', meal?.nutrients.cholesterol_mg /100);
+          const cholesterol = updateNutrientBars(retrievedRNI, 'cholesterol', meal?.nutrients.cholesterol_mg /1000);
           const imageUri = meal?.imageuri;
           const prediction = meal?.name;
           mealsDataContainer.push(
@@ -99,14 +101,13 @@ export default IndividualMeals = ({navigation}) => {
         {text: 'Delete', onPress: () => {
           (async () => {
           const user = auth.currentUser;
-          const id = await AsyncStorage.getItem(user.uid);
-          const mealsRef = collection(db, "users", id, "meals");
+          const mealsRef = collection(db, "users", user.uid, "meals");
           const mealsQuery = query(mealsRef, where('imageuri', '==', imageUri));
           const querySnapshot = await getDocs(mealsQuery);
           querySnapshot.forEach(async (docu) => {
-            await deleteDoc(doc(db, "users", id, "meals", docu.id));
+            await deleteDoc(doc(db, "users", user.uid, "meals", docu.id));
             await Filesystem.deleteAsync(imageUri);
-          })
+          });
           setRefreshing(!refreshing);
           })();
         }
@@ -133,16 +134,16 @@ export default IndividualMeals = ({navigation}) => {
       
     return (
       <View style={styles.middleIconsWrapper}>
-        <Pressable onPress={()=>{setExpandImage(true)}}>
+        <TouchableOpacity onPress={()=>{setExpandImage(true)}} activeOpacity={0.7}>
           <Image style={styles.foodPhoto} source={{ uri: imageUri }} resizeMode="cover" />
-        </Pressable>
+        </TouchableOpacity>
 
-        <Pressable onPress={handleDeleteMeal}>
+        <TouchableOpacity onPress={handleDeleteMeal}>
             <Image
             source={require('../../assets/images/deletemealbutton.png')}
             style={styles.deleteButton} 
             />
-          </Pressable>
+          </TouchableOpacity>
 
         <ImageBackground name="Individual Icon" style={styles.individualMealsScroll} source={require("../../assets/images/individualmealsbg.png")}>
           
@@ -153,7 +154,7 @@ export default IndividualMeals = ({navigation}) => {
           <View name="Nutrient Bars" style={styles.nutrients}>
             <View name="Row1" style={styles.nutrientRow}>
               <NutrientBar name={`calories: ${mealNutrients?.calories.toFixed(1)}`} tier={calories} />
-              <NutrientBar name={`sodium: ${(mealNutrients?.sodium_mg / 100).toFixed(1)}g`} tier={sodium} />
+              <NutrientBar name={`sodium: ${(mealNutrients?.sodium_mg).toFixed(1)}mg`} tier={sodium} />
             </View>
             <View name="Row2" style={styles.nutrientRow}>
               <NutrientBar name={`protein: ${mealNutrients?.protein_g.toFixed(1)}g`} tier={protein} />
@@ -188,9 +189,9 @@ export default IndividualMeals = ({navigation}) => {
             <Text className="datetext" style = {styles.dateText}>{todayDateString}</Text>     
           </ImageBackground>
           
-          <Pressable  onPress={()=>{navigation.navigate('Calendar')}}>
+          <TouchableOpacity  onPress={()=>{navigation.navigate('Calendar')}}>
             <Image style={styles.calendar} source = {require("../../assets/images/calendar.png")}></Image>
-          </Pressable>
+          </TouchableOpacity>
         </View>
         
         <FlatList
@@ -198,7 +199,8 @@ export default IndividualMeals = ({navigation}) => {
         horizontal={true}
         renderItem={renderIndividualMeal}
         ListEmptyComponent={handleEmptyList}
-        maxToRenderPerBatch={1}
+        maxToRenderPerBatch={2}
+        style={{marginHorizontal:17}}
         />
       
     </View>
@@ -239,8 +241,7 @@ const styles = StyleSheet.create({
 
   middleIconsWrapper:{
     marginTop:10,
-    marginLeft: 23,
-    marginRight: 23,
+    paddingHorizontal:10,
   },
 
   foodPhoto:{
