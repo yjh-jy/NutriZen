@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, KeyboardAvoidingView, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, TextInput } from 'react-native';
 import {useState} from 'react';
 import colors from '../../assets/colors/colors';
 import { signInWithEmailAndPassword} from 'firebase/auth';
@@ -56,17 +56,17 @@ export default Login = ({navigation}) => {
               
               <Text style = {styles.subtitle}>Password</Text>
               
-              <Pressable onPress={()=>{navigation.push('PasswordRetrival')}}>
+              <TouchableOpacity onPress={()=>{navigation.push('PasswordRetrival')}}>
                 <Text style = {styles.passwordRetrival} >Forget Password?</Text>
-                </Pressable> 
+                </TouchableOpacity> 
 
-              <Pressable onPress={handleLogin}>
+              <TouchableOpacity onPress={handleLogin}>
                 <Text style = {styles.login}>Login</Text>
-                </Pressable>
+                </TouchableOpacity>
 
-              <Pressable onPress={()=>{navigation.goBack()}}>
+              <TouchableOpacity onPress={()=>{navigation.goBack()}}>
                 <Text style = {styles.back} >Back</Text>
-                </Pressable>
+                </TouchableOpacity>
               
             </View>
             </KeyboardAvoidingView>

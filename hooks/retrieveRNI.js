@@ -1,12 +1,10 @@
 import { doc, getDoc} from "firebase/firestore"; 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth, db } from '../firebase'
 
 
 export async function retrieveRNI() {
     const user = auth.currentUser;
-    const id = await AsyncStorage.getItem(user.uid);
-    const docRef = doc(db, "users", id);
+    const docRef = doc(db, "users", user.uid);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
         userInformation = docSnap.data();

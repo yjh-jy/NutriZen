@@ -32,7 +32,7 @@ function rawToState(value) {
       case (value >= 65 && value <= 72):
         result = 'lacking10';
         break;
-      case (value >= 73 && value <= 80):
+      case (value >= 73 && value <= 79):
         result = 'lacking11';
         break;
   

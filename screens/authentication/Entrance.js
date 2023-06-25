@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, SafeAreaView, Pressable, Image } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image } from 'react-native'
 import {useCallback} from 'react'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
@@ -34,13 +34,13 @@ export default Entrance = ({navigation}) => {
                 source= {require("../../assets/images/creature_loading_non_looping.gif")}
                 >
                 </Image>
-                <Pressable onPress={() => navigation.navigate('Login')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                     <Text style = {styles.login}>Login</Text>
-                </Pressable>
+                </TouchableOpacity>
 
-                <Pressable onPress={() => navigation.navigate('Registration')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Registration')}>
                     <Text style = {styles.register}>Register</Text>
-                </Pressable>
+                </TouchableOpacity>
             </View>
 
             </SafeAreaView>

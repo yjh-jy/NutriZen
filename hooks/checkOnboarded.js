@@ -1,31 +1,27 @@
 import { useEffect, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
+import { doc, getDoc } from "firebase/firestore";
+
 
 export function checkOnboarded() {
   const [onboarded, setOnboarded] = useState(false);
-
+  
   useEffect(() => {
-    const checkUserOnboarded = async () => {
-      try {
-        const user = auth.currentUser;
-        if (user) {
-          const ref = await AsyncStorage.getItem(user.uid);
-          if (ref !== null) {
-            setOnboarded(true);
-          } else {
-            setOnboarded(false);
-          }
+    const unsub = async () =>{
+      const user = auth.currentUser;
+      if (user) {
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setOnboarded(true);
         } else {
           setOnboarded(false);
-        }
-      } catch (error) {
-        console.log('Error checking onboarded status:', error);
-      }
-    };
-
-    checkUserOnboarded();
+        };
+    } else {
+      setOnboarded(false);
+    }
+  };
+  unsub();
   }, [auth.currentUser]);
-
   return onboarded;
 }
