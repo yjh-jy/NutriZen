@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, ImageBackground } from 'react-native'
+import { StyleSheet, Text, View, Pressable, ImageBackground, TouchableHighlight } from 'react-native'
 import {useRef, useState, useEffect} from 'react'
 import colors from '../../assets/colors/colors';
 import { Camera, CameraType } from 'expo-camera';
@@ -7,7 +7,8 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import LoadingAnimation from '../../components/LoadingAnimation';
 import * as ImagePicker from 'expo-image-picker';
 import * as tf from '@tensorflow/tfjs'
-import {bundleResourceIO, decodeJpeg} from '@tensorflow/tfjs-react-native'
+import { decodeJpeg} from '@tensorflow/tfjs-react-native'
+import { getDownloadURL , getStorage, ref } from "firebase/storage";
 import * as FileSystem from 'expo-file-system';
 import { manipulateAsync } from 'expo-image-manipulator';
 
@@ -28,14 +29,15 @@ export default AddMeal = ({navigation}) => {
       if (!isTfReady) {
         await tf.ready(); // Wait for Tensorflow.js to get ready
         setIsTfReady(true);
-        // Bundle the model files and load the model:
-        const modelJSON = require('../../assets/model/model.json');
-        const modelWeights = require('../../assets/model/group1-shard1of1.bin');
-        const loadedModel = await tf.loadGraphModel(
-          bundleResourceIO(modelJSON, modelWeights)
-        ).catch((e) => {
+        const storage = getStorage();
+        const modelRef = ref(storage, 'gs://orbital-2af75.appspot.com/meal_detector/model.json');
+        const weightsRef = ref(storage, 'gs://orbital-2af75.appspot.com/meal_detector/group1-shard1of1.bin');
+        const modelJSON = await getDownloadURL(modelRef);
+        const modelWeights = await getDownloadURL(weightsRef);
+        const loadedModel = await tf.loadGraphModel(modelJSON, {weightPathPrefix:modelWeights}).catch((e) => {
           alert(e);
         });
+        await loadedModel.predict(tf.zeros([1, 224, 224, 3]));
         setModel(loadedModel); // Load the model to the state
       }
     })();
@@ -77,7 +79,8 @@ export default AddMeal = ({navigation}) => {
           );
         setImage(cropped_img);
       } catch (e) {
-        alert('Error:', e, 'Please re-check camera permissions.')
+        alert(e)
+
       }
     }
   };
@@ -101,15 +104,15 @@ export default AddMeal = ({navigation}) => {
 
     const imageTensor = await imageToTensor(image); // prepare the image
     const predictions = await model.predict(imageTensor); // send the image to the model
-    const probabilities = await predictions.data();
-    const highestPredictionIdx = await probabilities.indexOf(Math.max(...probabilities));
+    const probabilities = predictions.dataSync();
+    const highestPredictionIdx = probabilities.indexOf(Math.max(...probabilities));
     const class_names = require('../../assets/model/class_names.json');
     const prediction = class_names[highestPredictionIdx];
     const probability = (probabilities[highestPredictionIdx]*100).toFixed(2);
     alert(`Likely to be ${prediction} with a ${probability}% probability.`);
 
     setisLoading(false);
-  
+
     navigation.navigate('AddMealEntry', {predictionParam: prediction, imageParam:image});
     // Cleaning up the tensors/model to prevent memory leakage
     imageTensor.dispose();
@@ -129,10 +132,21 @@ export default AddMeal = ({navigation}) => {
     // Camera permissions are not granted yet
     return (
       <View style={styles.container}>
-        <Text style={{ textAlign: 'center', margin:30, fontFamily:'PixeloidSan' }}>We need your permission to show the camera</Text>
-        <Pressable onPress={requestPermission} style={{ textAlign: 'center', alignSelf:'center', }}>
-          <Text style={{fontFamily:'PixeloidSan' }}>Press to grant permission</Text>
-        </Pressable>
+        <Text style={{ textAlign: 'center', margin:50, fontSize:12, fontFamily:'PixeloidSan' }}>
+          {'We need your permission to show the camera.\n\nPlease also check your privacy settings if you denied the first time'}
+          </Text>
+
+        <View style={{flexDirection:'row', justifyContent:'center'}}>
+
+          <TouchableHighlight onPress={requestPermission} style={{ textAlign: 'center', alignSelf:'center',marginHorizontal:10 }} activeOpacity={0.2} underlayColor='transparent'>
+            <Text style={{fontFamily:'PixeloidSan'}}> Grant permission</Text>
+          </TouchableHighlight>
+
+          <TouchableHighlight onPress={()=>{navigation.navigate('DailyOverview')}} style={{ textAlign: 'center', alignSelf:'center', marginHorizontal:10}} activeOpacity={0.2} underlayColor='transparent'>
+            <Text style={{fontFamily:'PixeloidSan' }}>Go back</Text>
+          </TouchableHighlight>
+
+        </View>
       </View>
     );
   }
