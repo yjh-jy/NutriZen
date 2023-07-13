@@ -11,6 +11,9 @@ import Calendar from '../screens/main/Calendar';
 import IndividualMeals from '../screens/main/IndividualMeals';
 import AddMealEntry from '../screens/main/AddMealEntry';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import EditProfile from '../screens/main/EditProfile';
+import Notifications from '../screens/main/Notifications';
+import About from '../screens/main/About';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -77,6 +80,10 @@ export default function UserTab() {
             <Stack.Screen name="AddMeal" component={AddMeal} options = {{headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS, gestureEnabled:false}} />
             <Stack.Screen name="AddMealEntry" component={AddMealEntry} options = {{headerShown: false}} />
             <Stack.Screen name="Calendar" component={Calendar} options = {{headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS, gestureDirection:'vertical'}} />
+            <Stack.Screen name="EditProfile" component={EditProfile} options = {{headerShown: false}} />
+            <Stack.Screen name="Notifications" component={Notifications} options = {{headerShown: false}} />
+            <Stack.Screen name="About" component={About} options = {{headerShown: false}} />
+
           </RootStack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>
