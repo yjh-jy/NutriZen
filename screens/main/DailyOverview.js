@@ -19,6 +19,7 @@ export default DailyOverview = ({navigation}) => {
   const [carbohydrate, setCarbohydrate] = useState('lacking1');
   const [sugar, setSugar] = useState('lacking1');
   const [cholesterol, setCholesterol] = useState('lacking1');
+  const [message, setMessage] = useState('');
 
   const date = new Date();
   const todayDateString = `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
@@ -30,32 +31,44 @@ export default DailyOverview = ({navigation}) => {
       const fetchData = async () =>  {
         const [retrievedRNI, retrievedMeal] = await Promise.all([retrieveRNI(), retrieveMeals(date)]);
 
-        let calories = 0;
-        let sodium = 0;
-        let protein = 0;
-        let fiber = 0;
-        let fat = 0;
-        let carbohydrate = 0;
-        let sugar = 0;
-        let cholesterol = 0;
+        let total_calories = 0;
+        let total_sodium = 0;
+        let total_protein = 0;
+        let total_fiber = 0;
+        let total_fat = 0;
+        let total_carbohydrate = 0;
+        let total_sugar = 0;
+        let total_cholesterol = 0;
         retrievedMeal.forEach((meal) => {
-          calories += meal?.nutrients.calories;
-          sodium += meal?.nutrients.sodium_mg;
-          protein += meal?.nutrients.protein_g;
-          fiber += meal?.nutrients.fiber_g;
-          fat += meal?.nutrients.fat_total_g;
-          carbohydrate += meal?.nutrients.carbohydrates_total_g;
-          sugar += meal?.nutrients.sugar_g;
-          cholesterol += meal?.nutrients.cholesterol_mg
+          total_calories += meal?.nutrients.calories;
+          total_sodium += meal?.nutrients.sodium_mg;
+          total_protein += meal?.nutrients.protein_g;
+          total_fiber += meal?.nutrients.fiber_g;
+          total_fat += meal?.nutrients.fat_total_g;
+          total_carbohydrate += meal?.nutrients.carbohydrates_total_g;
+          total_sugar += meal?.nutrients.sugar_g;
+          total_cholesterol += meal?.nutrients.cholesterol_mg
           });
-        setCalorie(updateNutrientBars(retrievedRNI, 'calories',calories));
-        setSodium(updateNutrientBars(retrievedRNI, 'sodium', sodium/1000));
-        setProtein(updateNutrientBars(retrievedRNI, 'protein', protein));
-        setFibre(updateNutrientBars(retrievedRNI, 'fibre', fibre));
-        setFat(updateNutrientBars(retrievedRNI, 'fat',fat));
-        setCarbohydrate(updateNutrientBars(retrievedRNI, 'carbohydrate',carbohydrate));
-        setSugar(updateNutrientBars(retrievedRNI, 'sugar', sugar));
-        setCholesterol(updateNutrientBars(retrievedRNI, 'cholesterol', cholesterol /1000));
+        setCalorie(updateNutrientBars(retrievedRNI, 'calories',total_calories));
+        setSodium(updateNutrientBars(retrievedRNI, 'sodium', total_sodium/1000));
+        setProtein(updateNutrientBars(retrievedRNI, 'protein', total_protein));
+        setFibre(updateNutrientBars(retrievedRNI, 'fibre', total_fiber));
+        setFat(updateNutrientBars(retrievedRNI, 'fat',total_fat));
+        setCarbohydrate(updateNutrientBars(retrievedRNI, 'carbohydrate',total_carbohydrate));
+        setSugar(updateNutrientBars(retrievedRNI, 'sugar', total_sugar));
+        setCholesterol(updateNutrientBars(retrievedRNI, 'cholesterol', total_cholesterol /1000));
+
+        setMessage(''); //clears previous messages
+        const nutrientList = [calorie, sodium, protein, fibre, fat, carbohydrate, sugar, cholesterol];
+        nutrientList.forEach((nutrient)=>{
+          if (nutrient.includes('excessive')) {
+            setMessage(Object.keys({nutrient}));
+          } else {
+            setMessage(''); //clears previous messages
+          }
+
+        });
+
         // set the refreshing back to false
         setRefreshing(false);
       };
@@ -120,10 +133,7 @@ export default DailyOverview = ({navigation}) => {
         </TouchableOpacity>
         <ImageBackground style={styles.textbox} source={require("../../assets/images/advicebg.png")}>
           <Text style={styles.adviceText}>
-            High on Cholesterol{'\n'}
-            Cut down on fried food. Eat more omega-3 foods{'\n'}
-            High on Protein{'\n'}
-            Cut down on meat or beans. Eat more fruits/vegetable
+            {`High on ${message}\n Cut down on fried food. Eat more omega-3 foods\n High on Protein\n Cut down on meat or beans. Eat more fruits/vegetable`}
           </Text>
         </ImageBackground>
       </View>
@@ -138,6 +148,8 @@ export default DailyOverview = ({navigation}) => {
     refreshing={refreshing}
     onRefresh={() => setRefreshing(true)}
     style={{backgroundColor:colors.backgroundColor}}
+    showsVerticalScrollIndicator={false}
+
     />
 
   )

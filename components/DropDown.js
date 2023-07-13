@@ -4,11 +4,19 @@ import { Dropdown } from 'react-native-element-dropdown';
 import colors from '../assets/colors/colors';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
-const DropdownComponent = ({data, dropdownlabel, icon, setValue, value}) => {
+const DropdownComponent = ({data, dropdownlabel, icon, setValue, value, height=50,width=300,margin=10, alignSelf='center'}) => {
 
   return (
     <Dropdown
-      style={styles.dropdown}
+      style={{
+        margin: margin,
+        height: height,
+        width:width,
+        borderBottomColor: colors.textFieldColor,
+        borderBottomWidth: 3,
+        backgroundColor:colors.textFieldColor,
+        alignSelf:alignSelf
+      }}
       placeholderStyle={styles.placeholderStyle}
       selectedTextStyle={styles.selectedTextStyle}
       inputSearchStyle={styles.inputSearchStyle}
@@ -36,15 +44,6 @@ const DropdownComponent = ({data, dropdownlabel, icon, setValue, value}) => {
 export default DropdownComponent;
 
 const styles = StyleSheet.create({
-  dropdown: {
-    margin: 10,
-    height: 50,
-    width:300,
-    borderBottomColor: colors.textFieldColor,
-    borderBottomWidth: 3,
-    backgroundColor:colors.textFieldColor,
-    alignSelf:'center'
-  },
   icon: {
     marginRight: 10,
     marginLeft:15

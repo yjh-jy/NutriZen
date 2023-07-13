@@ -52,7 +52,8 @@ export default IndividualMeals = ({navigation, route}) => {
               cholesterol: cholesterol,
               prediction: prediction,
               mealNutrients: meal.nutrients,
-              imageuri: imageUri
+              imageuri: imageUri,
+              time: meal.time
             }
           );
         });
@@ -90,6 +91,7 @@ export default IndividualMeals = ({navigation, route}) => {
     const mealNutrients = (item.mealNutrients);
     const imageUri = (item.imageuri);
     const prediction = (item.prediction);
+    const time = item.time.toDate();
 
     const handleDeleteMeal = () =>
       Alert.alert('Delete Meal ?', 'This action is IRREVERSIBLE', [
@@ -138,18 +140,23 @@ export default IndividualMeals = ({navigation, route}) => {
           <Image style={styles.foodPhoto} source={{ uri: imageUri }} resizeMode="cover" />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={handleDeleteMeal}>
-            <Image
-            source={require('../../assets/images/deletemealbutton.png')}
-            style={styles.deleteButton} 
-            />
-          </TouchableOpacity>
+      
 
         <ImageBackground name="Individual Icon" style={styles.individualMealsScroll} source={require("../../assets/images/individualmealsbg.png")}>
           
           <Text style={styles.individualMealsText}>Individual Meals</Text>
 
+
+          <View style={{flexDirection:'row', alignItems:'flex-end'}}>
           <Text style={styles.mealName}>{prediction}</Text>
+          <TouchableOpacity onPress={handleDeleteMeal}>
+            <Image
+            source={require('../../assets/images/deletemealbutton.png')}
+            style={styles.deleteButton} 
+            />
+          </TouchableOpacity>
+          </View>
+
 
           <View name="Nutrient Bars" style={styles.nutrients}>
             <View name="Row1" style={styles.nutrientRow}>
@@ -168,6 +175,7 @@ export default IndividualMeals = ({navigation, route}) => {
               <NutrientBar name={`sugar: ${mealNutrients?.sugar_g.toFixed(1)}g`} tier={sugar} />
               <NutrientBar name={`cholesterol: ${mealNutrients?.cholesterol_mg.toFixed(1)}mg`} tier={cholesterol} />
             </View>
+            <Text style={{fontFamily:'PixeloidSan', fontSize:10, paddingBottom:5}}>Logged at: {`${time.toLocaleTimeString()}`}</Text>
           </View>
         </ImageBackground>
       </View>
@@ -200,7 +208,9 @@ export default IndividualMeals = ({navigation, route}) => {
         renderItem={renderIndividualMeal}
         ListEmptyComponent={handleEmptyList}
         maxToRenderPerBatch={2}
-        style={{marginHorizontal:17}}
+        style={{marginHorizontal:10}}
+        pagingEnabled={true}
+        showsHorizontalScrollIndicator={false}
         />
       
     </View>
@@ -231,16 +241,10 @@ const styles = StyleSheet.create({
     height:70,
     width:70,
   },
-  deleteButton: {
-    marginTop:10,
-    height:30,
-    width:30,
-    marginLeft:300,
-    
-  },
+
 
   middleIconsWrapper:{
-    marginTop:10,
+    marginTop:15,
     paddingHorizontal:10,
   },
 
@@ -250,7 +254,7 @@ const styles = StyleSheet.create({
     borderRadius:55,
   },
   individualMealsScroll:{
-    marginTop:-11,
+    marginTop:15,
     height:450,
     width:360,
     alignItems:'center',
@@ -260,14 +264,24 @@ const styles = StyleSheet.create({
   individualMealsText: {
     fontFamily: 'MinimalPixel',
     fontSize:37,
-    marginTop:10
+    marginTop:10,
+    
+  },
+
+  deleteButton: {
+    marginTop:10,
+    height:21,
+    width:21,
+    
+    
   },
 
   mealName: {
     fontFamily: 'PixeloidSan',
     marginTop:30,
     fontSize:15,
-    textAlign: 'center'
+    textAlign: 'center',
+    marginHorizontal:5
   },
 
   nutrients:{
