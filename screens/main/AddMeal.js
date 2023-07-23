@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, ImageBackground, TouchableHighlight } from 'react-native'
+import { StyleSheet, Text, View, Pressable, ImageBackground, TouchableOpacity } from 'react-native'
 import {useRef, useState, useEffect} from 'react'
 import colors from '../../assets/colors/colors';
 import { Camera, CameraType } from 'expo-camera';
@@ -138,13 +138,13 @@ export default AddMeal = ({navigation}) => {
 
         <View style={{flexDirection:'row', justifyContent:'center'}}>
 
-          <TouchableHighlight onPress={requestPermission} style={{ textAlign: 'center', alignSelf:'center',marginHorizontal:10 }} activeOpacity={0.2} underlayColor='transparent'>
+          <TouchableOpacity onPress={requestPermission} style={{ textAlign: 'center', alignSelf:'center',marginHorizontal:10 }} activeOpacity={0.2} underlayColor='transparent'>
             <Text style={{fontFamily:'PixeloidSan'}}> Grant permission</Text>
-          </TouchableHighlight>
+          </TouchableOpacity>
 
-          <TouchableHighlight onPress={()=>{navigation.navigate('DailyOverview')}} style={{ textAlign: 'center', alignSelf:'center', marginHorizontal:10}} activeOpacity={0.2} underlayColor='transparent'>
+          <TouchableOpacity onPress={()=>{navigation.navigate('DailyOverview')}} style={{ textAlign: 'center', alignSelf:'center', marginHorizontal:10}} activeOpacity={0.2} underlayColor='transparent'>
             <Text style={{fontFamily:'PixeloidSan' }}>Go back</Text>
-          </TouchableHighlight>
+          </TouchableOpacity>
 
         </View>
       </View>
@@ -161,66 +161,63 @@ export default AddMeal = ({navigation}) => {
         // If image is set, show the image preview screen
         <View style={{ flex: 1, justifyContent: 'center', backgroundColor: colors.backgroundColor }}>
           <ImageBackground source={{ uri: image.uri }} style={{ aspectRatio: 1 / 1, justifyContent: 'space-between' }}>
-            <Ionicons
-              name="arrow-back-circle-outline"
-              color="white"
-              size={40}
-              onPress={() => {
-                setImage(null);
-              }}
-              style={{ padding: 15, marginTop: 30, marginHorizontal: 10 }}
-            />
-  
-            <FontAwesome5
+
+            <TouchableOpacity onPress={() => {setImage(null)}}>
+              <Ionicons
+                name="arrow-back-circle-outline"
+                color="white"
+                size={40}
+                style={{ padding: 15, marginTop: 30, marginHorizontal: 10 }}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={model ? handleInference : () => {alert('Model is loading. Please wait');}}>
+              <FontAwesome5
               name="brain"
               color="white"
               size={35}
               style={{ padding: 15, marginLeft: 330, marginBottom: 30 }}
-              onPress={model ? handleInference : () => {
-                alert('Model is loading. Please wait');
-              }}
-            />
+              />
+            </TouchableOpacity>
           </ImageBackground>
         </View>
       ) : (
         // Else, show the camera view
         <Camera style={styles.camera} type={type} ref={cameraRef}>
           <View style={styles.topButtons}>
-            <Ionicons
-              name="close-outline"
-              color="white"
-              size={40}
-              onPress={() => {
-                navigation.navigate('MainTabs');
-              }}
-              backgroundColor="transparent"
-            />
-  
-            <Ionicons
-              name="camera-reverse"
-              color="white"
-              size={40}
-              onPress={toggleCameraType}
-              backgroundColor="transparent"
-            />
+            <TouchableOpacity onPress={() => {navigation.navigate('MainTabs')}}>
+              <Ionicons
+                name="close-outline"
+                color="white"
+                size={40}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={toggleCameraType}>
+              <Ionicons
+                name="camera-reverse"
+                color="white"
+                size={40}
+              />
+            </TouchableOpacity>
           </View>
   
           <View style={styles.square} />
   
           <View style={styles.bottomButtons}>
-            <Ionicons
-              name="albums"
-              color="white"
-              size={30}
-              onPress={handlePickImage}
-            />
-  
-            <Ionicons
-              name="radio-button-off"
-              color="white"
-              size={80}
-              onPress={handleTakePicture}
-            />
+            <TouchableOpacity onPress={handlePickImage}>
+              <Ionicons
+                name="albums"
+                color="white"
+                size={30}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleTakePicture}>
+              <Ionicons
+                name="radio-button-off"
+                color="white"
+                size={80}
+              />
+            </TouchableOpacity>
           </View>
         </Camera>
       )}
@@ -246,7 +243,6 @@ const styles = StyleSheet.create({
     padding:15,
     marginTop:40,
     marginHorizontal:10,
-    overlayColor:'transparent'
   },
   bottomButtons: {
     alignItems:'center',
@@ -254,7 +250,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginLeft:40,
     marginRight:160,
-    backgroundColor:'transparent',
     marginBottom: 40,
 
   },
