@@ -6,11 +6,14 @@ import { doc, setDoc} from "firebase/firestore";
 import { db } from '../../firebase';
 import { auth } from '../../firebase';
 import DropdownComponent from '../../components/DropDown';
+import { onboardedAtom } from '../../hooks/checkOnboarded';
+import { useSetAtom } from 'jotai';
 
 
 export default Onboarding5 = ({navigation, route}) => {
   const [isloading, setIsloading] = useState(false);
   const [fitness, setFitness] = useState('');
+  const setOnboarded = useSetAtom(onboardedAtom);
   
   const name = route.params.nameParam;
   const age = route.params.ageParam;
@@ -37,6 +40,7 @@ export default Onboarding5 = ({navigation, route}) => {
       weight: Number(weight),
       fitness_constant: fitness
     });
+    setOnboarded(true);
     setIsloading(false);
   }
 

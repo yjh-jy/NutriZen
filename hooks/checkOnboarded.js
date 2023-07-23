@@ -1,27 +1,33 @@
 import { useEffect, useState } from 'react';
 import { auth, db } from '../firebase';
 import { doc, getDoc } from "firebase/firestore";
+import { atom, useAtom, useAtomValue } from 'jotai';
 
+export const onboardedAtom = atom(false);
+const currentUserOnboardedAtom = atom(false);
 
 export function checkOnboarded() {
-  const [onboarded, setOnboarded] = useState(false);
+  const onboarded = useAtomValue(onboardedAtom);
+  const [currentUserOnboarded, setCurrentUserOnboarded] = useAtom(currentUserOnboardedAtom);
   
+  const user = auth.currentUser;
+  console.log(currentUserOnboarded);
+    
   useEffect(() => {
     const unsub = async () =>{
-      const user = auth.currentUser;
       if (user) {
         const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setOnboarded(true);
+        if (docSnap.exists() || onboarded) {
+          setCurrentUserOnboarded(true);
         } else {
-          setOnboarded(false);
+          setCurrentUserOnboarded(false)
         };
-    } else {
-      setOnboarded(false);
-    }
-  };
-  unsub();
-  }, [auth.currentUser]);
-  return onboarded;
+      } else {
+        setCurrentUserOnboarded(false)
+      }
+    };
+    unsub();
+  }, [user, onboarded]);
+  return currentUserOnboarded
 }
