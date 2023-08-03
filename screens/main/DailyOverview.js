@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, Image, ImageBackground, FlatList, SafeAreaView, TouchableHighlight, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Image, ImageBackground, FlatList, TouchableOpacity } from 'react-native'
 import {useCallback, useEffect, useState} from 'react'
 import colors from '../../assets/colors/colors'
 import NutrientBar from '../../components/NutrientBar';
@@ -6,20 +6,23 @@ import { retrieveRNI } from '../../hooks/retrieveRNI';
 import { retrieveMeals } from '../../hooks/retrieveMeals';
 import { updateNutrientBars } from '../../hooks/updateNutrientBars';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ScrollView } from 'react-native-gesture-handler';
+import { useAtom } from 'jotai';
+import { calorieAtom, sodiumAtom, fatAtom, carbohydrateAtom, sugarAtom, cholesterolAtom, proteinAtom,fibreAtom } from "../../hooks/updateBadges";
 
 
 export default DailyOverview = ({navigation}) => {
   const insets = useSafeAreaInsets(); // safearea view
   // nutrient bar states
-  const [calorie, setCalorie] = useState('lacking1');
-  const [sodium, setSodium] = useState('lacking1');
-  const [protein, setProtein] = useState('lacking1');
-  const [fibre, setFibre] = useState('lacking1');
-  const [fat, setFat] = useState('lacking1');
-  const [carbohydrate, setCarbohydrate] = useState('lacking1');
-  const [sugar, setSugar] = useState('lacking1');
-  const [cholesterol, setCholesterol] = useState('lacking1');
-  const [message, setMessage] = useState('');
+  const [calorie, setCalorie] = useAtom(calorieAtom);
+  const [sodium, setSodium] = useAtom(sodiumAtom);
+  const [protein, setProtein] = useAtom(proteinAtom);
+  const [fibre, setFibre] = useAtom(fibreAtom);
+  const [fat, setFat] = useAtom(fatAtom);
+  const [carbohydrate, setCarbohydrate] = useAtom(carbohydrateAtom);
+  const [sugar, setSugar] = useAtom(sugarAtom);
+  const [cholesterol, setCholesterol] = useAtom(cholesterolAtom);
+  const [message, setMessage] = useState([]);
 
   const date = new Date();
   const todayDateString = `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
@@ -30,6 +33,7 @@ export default DailyOverview = ({navigation}) => {
     if (refreshing) {
       const fetchData = async () =>  {
         const [retrievedRNI, retrievedMeal] = await Promise.all([retrieveRNI(), retrieveMeals(date)]);
+        setMessage([]); //clears previous messages
 
         let total_calories = 0;
         let total_sodium = 0;
@@ -57,17 +61,39 @@ export default DailyOverview = ({navigation}) => {
         setCarbohydrate(updateNutrientBars(retrievedRNI, 'carbohydrate',total_carbohydrate));
         setSugar(updateNutrientBars(retrievedRNI, 'sugar', total_sugar));
         setCholesterol(updateNutrientBars(retrievedRNI, 'cholesterol', total_cholesterol /1000));
+    
+        if (calorie.includes('excessive')) {
+          setMessage((message) => [...message, 'High on Calories\nCut down on carbs and drink more water !\n\n']);
+        };
+        
+        if (sodium.includes('excessive')) {
+          setMessage((message) => [...message, 'High on Sodium\nCut down fast foods and use more herbs/spices to boost flavor !\n\n']);
+        };
+        
+        if (protein.includes('excessive')) {
+          setMessage((message) => [...message, 'High on Protein\nCut down on meat and eat more vegetables !\n\n']);
+        };
+        
+        if (fibre.includes('excessive')) {
+          setMessage((message) => [...message, 'High on Fibre\nDrink more water and cut down on fibre supplements!\n\n']);
+        };
+        
+        if (fat.includes('excessive')) {
+          setMessage((message) => [...message, 'High on Fat\nCut down on fatty meat !\n\n']);
+        };
+        
+        if (carbohydrate.includes('excessive')) {
+          setMessage((message) => [...message, 'High on Carbohydrate\nCut down on wholegrain foods like rice !\n\n']);
+        };
+        
+        if (sugar.includes('excessive')) {
+          setMessage((message) => [...message, 'High on Sugar\nCut down on sugary drinks !\n\n']);
+        };
+        
+        if (cholesterol.includes('excessive')) {
+          setMessage((message) => [...message, 'High on Cholesterol\nCut down on egg yolks and fatty food!\n\n']);
+        };
 
-        setMessage(''); //clears previous messages
-        const nutrientList = [calorie, sodium, protein, fibre, fat, carbohydrate, sugar, cholesterol];
-        nutrientList.forEach((nutrient)=>{
-          if (nutrient.includes('excessive')) {
-            setMessage(Object.keys({nutrient}));
-          } else {
-            setMessage(''); //clears previous messages
-          }
-
-        });
 
         // set the refreshing back to false
         setRefreshing(false);
@@ -129,12 +155,14 @@ export default DailyOverview = ({navigation}) => {
     
       <View name="Bottom Icon" style={styles.bottom}>
         <TouchableOpacity onPress={()=>{navigation.navigate('IndividualMeals')}} activeOpacity={0.6}>
-        <Image style={styles.creature} source={require("../../assets/images/creature.png")} />
+          <Image style={styles.creature} source={require("../../assets/images/creature.png")} />
         </TouchableOpacity>
         <ImageBackground style={styles.textbox} source={require("../../assets/images/advicebg.png")}>
-          <Text style={styles.adviceText}>
-            {`High on ${message}\n Cut down on fried food. Eat more omega-3 foods\n High on Protein\n Cut down on meat or beans. Eat more fruits/vegetable`}
-          </Text>
+          <ScrollView nestedScrollEnabled={true}>
+            <Text style={styles.adviceText}>
+              {message[0] ? message : 'Nothing excessive consumed for now...'}
+            </Text>
+          </ScrollView>
         </ImageBackground>
       </View>
     </View>
@@ -149,9 +177,7 @@ export default DailyOverview = ({navigation}) => {
     onRefresh={() => setRefreshing(true)}
     style={{backgroundColor:colors.backgroundColor}}
     showsVerticalScrollIndicator={false}
-
     />
-
   )
 }
 
@@ -206,7 +232,6 @@ const styles = StyleSheet.create({
 
   bottom: {
     alignItems: 'center',
-    justifyContent:'space-between',
     paddingHorizontal:15,
     marginTop:20,
   },
@@ -218,17 +243,17 @@ const styles = StyleSheet.create({
   textbox: {
     height:175,
     width:340,
-    marginTop:-20,
-    justifyContent:'flex-start',
+    marginTop:-20, 
     alignItems:'center',
+    alignContent:'center',
+    paddingVertical:30,
+    paddingHorizontal:50
   },
   adviceText:{
-    marginTop:'10%',
     fontFamily:'PixeloidSan',
     fontSize:12,
     textAlign:'center',
-    width:'75%',
-    height:'70%',
+    letterSpacing:1.1,
   },
 
 })
