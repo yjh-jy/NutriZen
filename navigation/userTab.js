@@ -82,7 +82,7 @@ export default function UserTab() {
             <Stack.Screen name="Calendar" component={Calendar} options = {{headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS, gestureDirection:'vertical'}} />
             <Stack.Screen name="EditProfile" component={EditProfile} options = {{headerShown: false}} />
             <Stack.Screen name="Notifications" component={Notifications} options = {{headerShown: false}} />
-            <Stack.Screen name="About" component={About} options = {{headerShown: false}} />
+            <Stack.Screen name="About" component={About} options = {{headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS, gestureEnabled:false}} />
 
           </RootStack.Navigator>
         </NavigationContainer>
