@@ -114,7 +114,7 @@ export default Profile = ({navigation}) => {
       justifyContent:'center',
     }}
     >
-    <TouchableOpacity style={{marginRight:15, alignSelf:'flex-end'}}>
+    <TouchableOpacity style={{marginRight:15, alignSelf:'flex-end'}} onPress={handleSignOut}>
       <Ionicons name="exit-outline" 
       color='black'
       size={40}
