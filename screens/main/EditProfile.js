@@ -25,8 +25,6 @@ const EditProfile = ({navigation, route}) => {
     const [fitness, setFitness] = useState(fitnessDataMap[String(route.params.fitnessParam)]);
     const [profilePic, setProfilePic] = useState(route.params.profilePicParam);
 
-    console.log(fitness);
-
     const genderData = [
       { label: 'male', value: 'male' },
       { label: 'female', value: 'female' },
